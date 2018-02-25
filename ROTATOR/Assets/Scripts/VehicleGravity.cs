@@ -8,13 +8,15 @@ public class VehicleGravity : MonoBehaviour {
 
 	// Private variables
 	private Rigidbody ship;
+	private BoxCollider shipCollider;
 	private Ray ray;
 	private RaycastHit hit;
 
 	// Use this for initialization
 	void Start () {
-		// Get the rigidbody for the attached object
+		// Get the rigidbody & box collider for the attached object
 		ship = GetComponent<Rigidbody>();
+		shipCollider = GetComponent<BoxCollider>();
 	}
 	
 	// Update is called once per frame
@@ -30,8 +32,15 @@ public class VehicleGravity : MonoBehaviour {
 			ship.AddRelativeForce (Vector3.forward / 1.5f, ForceMode.VelocityChange);
 		} 
 		// Velocity stop button (remove when doing using for testing)
-		else if (Input.GetKey("x")) {
+		if (Input.GetKey("x")) {
 			ship.velocity = Vector3.zero;
+		}
+		// Button to shift to other side of track (code a better version after testing)
+		if (Input.GetKeyDown("z") && hit.transform.tag == "Track"){
+			shipCollider.isTrigger = true;
+			transform.Translate (new Vector3(0,-6,0), Space.Self);
+			transform.Rotate (0, 0, 180);
+			shipCollider.isTrigger = false;
 		}
 
 		/* (Old) Gravity - world emulation
