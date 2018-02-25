@@ -11,6 +11,8 @@ public class VehicleGravity : MonoBehaviour {
 	private BoxCollider shipCollider;
 	private Ray ray;
 	private RaycastHit hit;
+    private float shipTurn = 0.0f;
+    private float turnStrength = 5f;
 
 	// Use this for initialization
 	void Start () {
@@ -21,22 +23,30 @@ public class VehicleGravity : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-	}
+        //Axis to turn the ship
+        float turnAxis = Input.GetAxis("Horizontal");
+        shipTurn = turnAxis;
+    }
 
 	void FixedUpdate() {
 		ray = new Ray (transform.position, -transform.up);
-
+        //Turning the ship (just for testing)
+        if (shipTurn > 0){
+            ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
+        }
+        else if (shipTurn < 0){
+            ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
+        }
 		// Velocity button (remove when done using for testing)
-		if (Input.GetKey("space")) {
+		if (Input.GetButton("Move")) {
 			ship.AddRelativeForce (Vector3.forward / 1.5f, ForceMode.VelocityChange);
 		} 
 		// Velocity stop button (remove when doing using for testing)
-		if (Input.GetKey("x")) {
+		if (Input.GetButton("Stop")) {
 			ship.velocity = Vector3.zero;
 		}
 		// Button to shift to other side of track (code a better version after testing)
-		if (Input.GetKeyDown("z") && hit.transform.tag == "Track"){
+		if (Input.GetButtonDown("Reverse") && hit.transform.tag == "Track"){
 			shipCollider.isTrigger = true;
 			transform.Translate (new Vector3(0,-6,0), Space.Self);
 			transform.Rotate (0, 0, 180);
