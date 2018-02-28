@@ -23,71 +23,75 @@ public class VehicleGravity : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //Axis to turn the ship
+        // Axis to turn the ship
         float turnAxis = Input.GetAxis("Horizontal");
         shipTurn = turnAxis;
     }
 
 	void FixedUpdate() {
+		// All action are based on a physics raycast
 		ray = new Ray (transform.position, -transform.up);
-        //Turning the ship (just for testing)
-        if (shipTurn > 0){
-            ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
-        }
-        else if (shipTurn < 0){
-            ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
-        }
-		// Velocity button (remove when done using for testing)
+		if (Physics.Raycast (ray, out hit)) {
+			TestDriving ();
+			GravityCheck (hit);
+		} 
+		else {
+			// Call for code to destroy/respawn ship as the raycast has missed a track object (ship is OOB at this point)
+			print ("Raycast missed");
+		}
+	}
+
+	// Gravity emulation that checks if raycast hit on a track object
+	void GravityCheck(RaycastHit hit){
+		// Debug logged hit distance for testing purposes (can be deleted when no longer needed)
+		Debug.Log (hit.distance);
+
+		if (hit.transform.tag == "Track") {
+			// Keep the rotation of the ship matching the rotation of the track normal face
+			Quaternion targetRotation = Quaternion.FromToRotation (transform.up, hit.normal) * transform.rotation;
+			transform.rotation = Quaternion.RotateTowards (transform.rotation, targetRotation, Time.deltaTime * 200);
+
+			// Keep the ship clinging to the track based on the hit distance of the raycast
+			if (hit.distance > 2.5 && hit.distance < 2.7) {
+				ship.AddForce (-transform.up * (Physics.gravity.magnitude / 10));
+			} else if (hit.distance > 2.7 && hit.distance < 3.5) {
+				ship.AddForce (-transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
+			} else if (hit.distance < 2.5 && hit.distance > 2.3) {
+				ship.AddForce (transform.up * (Physics.gravity.magnitude / 10));
+			} else if (hit.distance < 2.3 && hit.distance > 1.5) {
+				// ship.velocity = Vector3.zero;
+				ship.AddForce (transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
+			} else if (hit.distance > 3.5) {
+				ship.AddForce (-transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
+			} else if (hit.distance < 1.5) {
+				ship.AddForce (transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
+			}
+		}
+	}
+
+	// All code is used to test the ship steering/acceleration etc.. Code should be moved to new script in the future
+	void TestDriving(){		
+		// Turning the ship
+		if (shipTurn > 0.15){
+			ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
+		}
+		else if (shipTurn < 0.15){
+			ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
+		}
+		// Velocity button
 		if (Input.GetButton("Move")) {
 			ship.AddRelativeForce (Vector3.forward / 1.5f, ForceMode.VelocityChange);
 		} 
-		// Velocity stop button (remove when doing using for testing)
+		// Velocity stop button
 		if (Input.GetButton("Stop")) {
 			ship.velocity = Vector3.zero;
 		}
-		// Button to shift to other side of track (code a better version after testing)
+		// Button to shift to other side of track
 		if (Input.GetButtonDown("Reverse") && hit.transform.tag == "Track"){
 			shipCollider.isTrigger = true;
 			transform.Translate (new Vector3(0,-6,0), Space.Self);
 			transform.Rotate (0, 0, 180);
 			shipCollider.isTrigger = false;
-		}
-
-		/* (Old) Gravity - world emulation
-		if (gravityReversed) {
-			ship.AddForce (Vector3.up * Physics.gravity.magnitude);
-		} 
-		else {
-			ship.AddForce (-Vector3.up * Physics.gravity.magnitude);
-		}
-		*/
-
-		// Gravity (based on raycast hit on track object)
-		if (Physics.Raycast (ray, out hit)) {
-			Debug.Log (hit.distance);
-
-			if (hit.transform.tag == "Track") {
-				Quaternion targetRotation = Quaternion.FromToRotation (transform.up, hit.normal) * transform.rotation;
-				transform.rotation = Quaternion.RotateTowards (transform.rotation, targetRotation, Time.deltaTime * 200);
-
-				if (hit.distance > 2.5 && hit.distance < 2.7) {
-					ship.AddForce (-transform.up * (Physics.gravity.magnitude / 10));
-				} else if (hit.distance > 2.7 && hit.distance < 3.5) {
-					ship.AddForce (-transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
-				} else if (hit.distance < 2.5 && hit.distance > 2.3) {
-					ship.AddForce (transform.up * (Physics.gravity.magnitude / 10));
-				} else if (hit.distance < 2.3 && hit.distance > 1.5) {
-					// ship.velocity = Vector3.zero;
-					ship.AddForce (transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
-				} else if (hit.distance > 3.5) {
-					ship.AddForce (-transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
-				} else if (hit.distance < 1.5) {
-					ship.AddForce (transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
-				}
-			}							
-			else {
-				print ("Not a track object");
-			}
 		}
 	}
 
