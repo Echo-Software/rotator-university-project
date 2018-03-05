@@ -13,6 +13,8 @@ public class VehicleGravity : MonoBehaviour {
 	private RaycastHit hit;
     private float shipTurn = 0.0f;
     private float turnStrength = 5f;
+    private bool isAccelerating = false;
+    private bool isBraking = false;
 
 	// Use this for initialization
 	void Start () {
@@ -70,24 +72,35 @@ public class VehicleGravity : MonoBehaviour {
 	}
 
 	// All code is used to test the ship steering/acceleration etc.. Code should be moved to new script in the future
-	void TestDriving(){		
-		// Turning the ship
-		if (shipTurn > 0.15){
+	void TestDriving(){
+
+        // Turning the ship
+        if (shipTurn > 0.15){
 			ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
 		}
 		else if (shipTurn < 0.15){
 			ship.AddRelativeTorque(Vector3.up * shipTurn * turnStrength);
 		}
 		// Velocity button
-		if (Input.GetButton("Move")) {
-			ship.AddRelativeForce (Vector3.forward / 1.5f, ForceMode.VelocityChange);
+		if (Input.GetAxisRaw("RT_Button") != 0) {
+                ship.AddRelativeForce(Vector3.forward / 1.5f, ForceMode.VelocityChange);
+                isAccelerating = true;
 		} 
+        else if (Input.GetAxisRaw("RT_Button") == 0 )
+        {
+            isAccelerating = false;
+        }
 		// Velocity stop button
-		if (Input.GetButton("Stop")) {
+		if (Input.GetAxisRaw("LT_Button") !=0) {
 			ship.velocity = Vector3.zero;
+            isBraking = true;
 		}
+        else if(Input.GetAxisRaw("LT_Button") == 0)
+        {
+            isBraking = false;
+        }
 		// Button to shift to other side of track
-		if (Input.GetButtonDown("Reverse") && hit.transform.tag == "Track"){
+		if (Input.GetButtonDown("Y_Button") && hit.transform.tag == "Track"){
 			shipCollider.isTrigger = true;
 			transform.Translate (new Vector3(0,-6,0), Space.Self);
 			transform.Rotate (0, 0, 180);
