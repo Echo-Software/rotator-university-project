@@ -31,14 +31,14 @@ public class VehicleGravity : MonoBehaviour {
     }
 
 	void FixedUpdate() {
-		// All action are based on a physics raycast
+		// All actions are based on a physics raycast
 		ray = new Ray (transform.position, -transform.up);
 		if (Physics.Raycast (ray, out hit)) {
 			TestDriving ();
 			GravityCheck (hit);
 		} 
 		else {
-			// Call for code to destroy/respawn ship as the raycast has missed a track object (ship is OOB at this point)
+			// Here we can call for code to destroy/respawn ship as the raycast has missed a track object (ship is OOB at this point)
 			print ("Raycast missed");
 		}
 	}
@@ -61,7 +61,6 @@ public class VehicleGravity : MonoBehaviour {
 			} else if (hit.distance < 2.5 && hit.distance > 2.3) {
 				ship.AddForce (transform.up * (Physics.gravity.magnitude / 10));
 			} else if (hit.distance < 2.3 && hit.distance > 1.5) {
-				// ship.velocity = Vector3.zero;
 				ship.AddForce (transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
 			} else if (hit.distance > 3.5) {
 				ship.AddForce (-transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
