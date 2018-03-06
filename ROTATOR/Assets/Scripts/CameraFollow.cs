@@ -10,7 +10,11 @@ public class CameraFollow : MonoBehaviour {
 
 	// Private variables
 	private float smoothSpeed = 5f;
-	
+
+	void Start(){
+		transform.position = cameraHook.position;
+	}
+
 	// Update is called once per frame
 	void FixedUpdate () {
 		// Keeps the camera oriented to gameobjects attached to the ship and smooths the movement
