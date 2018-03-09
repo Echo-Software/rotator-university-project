@@ -39,14 +39,14 @@ public class VehicleGravity : MonoBehaviour {
 		} 
 		else {
 			// Here we can call for code to destroy/respawn ship as the raycast has missed a track object (ship is OOB at this point)
-			print ("Raycast missed");
+			// print ("Raycast missed");
 		}
 	}
 
 	// Gravity emulation that checks if raycast hit on a track object
 	void GravityCheck(RaycastHit hit){
 		// Debug logged hit distance for testing purposes (can be deleted when no longer needed)
-		Debug.Log (hit.distance);
+		// Debug.Log (hit.distance);
 
 		if (hit.transform.tag == "Track") {
 			// Keep the rotation of the ship matching the rotation of the track normal face
@@ -64,7 +64,7 @@ public class VehicleGravity : MonoBehaviour {
 				ship.AddForce (transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
 			} else if (hit.distance > 3.5) {
 				ship.AddForce (-transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
-			} else if (hit.distance < 1.5) {
+			} else if (hit.distance < 1.7) {
 				ship.AddForce (transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
 			}
 		}
@@ -104,6 +104,12 @@ public class VehicleGravity : MonoBehaviour {
 			transform.Translate (new Vector3(0,-6,0), Space.Self);
 			transform.Rotate (0, 0, 180);
 			shipCollider.isTrigger = false;
+		}
+	}
+
+	void OnCollisionEnter (Collision col){
+		if (col.gameObject.tag == "Track") {
+			Debug.Log ("Collision made with track! Something is wrong (track incline too steep/gravity not working as intended)");
 		}
 	}
 
