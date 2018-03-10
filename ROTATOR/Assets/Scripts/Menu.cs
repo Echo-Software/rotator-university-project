@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviour {
 
     public GameObject subMenu;
-    bool uiStatus = false;
+    private bool uiStatus = false;
 
     // Use this for initialization
     void Start() {
@@ -15,20 +15,23 @@ public class Menu : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        menu();
+        PauseMenu();
     }
 
-    void menu()
+    void PauseMenu()
     {
-        if (Input.GetButtonDown("Start_Button") && uiStatus == false)
+        if (Input.GetButtonDown("Player1_Start_Button") && uiStatus == false)
         {
+			Time.timeScale = 0;
             uiStatus = true;
             subMenu.gameObject.SetActive(true);
         }
-        else if (Input.GetButtonDown("Start_Button") && uiStatus == true)
+		else if (Input.GetButtonDown("Player1_Start_Button") && uiStatus == true)
         {
+			Time.timeScale = 1;
             uiStatus = false;
             subMenu.gameObject.SetActive(false);
         }
     }
+    
 }

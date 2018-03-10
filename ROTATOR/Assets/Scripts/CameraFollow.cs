@@ -16,8 +16,7 @@ public class CameraFollow : MonoBehaviour {
 		transform.position = cameraHook.position;
 	}
 
-	// Update is called once per frame
-	void FixedUpdate () {
+	void FixedUpdate() {
 		// Keeps the camera oriented to gameobjects attached to the ship and smooths the movement
 		transform.forward = Vector3.Lerp (transform.forward, cameraHook.forward, smoothSpeed * Time.deltaTime);
 		transform.position = Vector3.Lerp (transform.position, cameraHook.position, smoothSpeed * Time.deltaTime);
