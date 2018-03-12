@@ -15,6 +15,9 @@ public class VehicleControl : MonoBehaviour {
 	private Vector3 localVelocity;
 	private int controllingPlayer;
 	private float turnAxis;
+	private float turningLimit;
+	private float accelerationAxis;
+	private float brakingAxis;
 	private string playerInput;
 	[SerializeField]
 	private bool accelerating, braking = false;
@@ -22,7 +25,7 @@ public class VehicleControl : MonoBehaviour {
 	// Ship specific stats
 	private float shipTopSpeed = 30f;
 	private float shipAcceleration = 1f;
-	private float shipHandlingRate = 3f;
+	private float shipHandlingRate = 30f;
 	private int shipGravityCharges = 3;
 
 	// Use this for initialization
@@ -47,6 +50,9 @@ public class VehicleControl : MonoBehaviour {
 		if (controllingPlayer == 4) {
 			playerInput = "Player4_";
 		}
+
+		// Set the ship moving an indistinguishable amount velocity gives an accurate reading
+		ship.velocity = transform.forward * -0.001f;
 	}	
 
 	// Update is called once per frame
@@ -59,7 +65,6 @@ public class VehicleControl : MonoBehaviour {
 			transform.Rotate (0, 0, 180);
 			shipCollider.isTrigger = false;
 		}
-
 	}
 
 	void FixedUpdate() {
@@ -72,20 +77,30 @@ public class VehicleControl : MonoBehaviour {
 
 	// Method that handles all of the ships handling
 	void ShipHandling(){
-		// Axis to turn the ship
+		// Store the turning, acceleration and braking axis values in variables
 		turnAxis = Input.GetAxis(playerInput + "Horizontal");
+		accelerationAxis = Input.GetAxisRaw (playerInput + "RT_Button");
+		brakingAxis = Input.GetAxisRaw (playerInput + "LT_Button");
 
 		// Determine the local velocity of the ship for use with other elements
-		localVelocity = transform.InverseTransformDirection(ship.velocity);
+		localVelocity = transform.InverseTransformDirection (ship.velocity);
 
-		// Ship handling
-		if (turnAxis > 0 && (accelerating || braking)) {
+		// Set a variable that limits how much the user can turn the ship based on how fast they are currently going
+		turningLimit = localVelocity.z / 10;
+
+		// Make sure the turning limit never goes below 5
+		if (turningLimit < 5) {
+			turningLimit = 5;
+		}
+
+		// Ship turning controls
+		if (turnAxis > 0 && (localVelocity.z > 0 || braking)) {
 			steering = true;
-			ship.AddRelativeTorque (Vector3.up * turnAxis * shipHandlingRate);
+			ship.AddRelativeTorque (Vector3.up * turnAxis * (shipHandlingRate / turningLimit));
 		} 
-		else if (turnAxis < 0 && (accelerating || braking)) {
+		else if (turnAxis < 0 && (localVelocity.z > 0 || braking)) {
 			steering = true;
-			ship.AddRelativeTorque (Vector3.up * turnAxis * shipHandlingRate);
+			ship.AddRelativeTorque (Vector3.up * turnAxis * (shipHandlingRate / turningLimit));
 		} 
 		else if (turnAxis == 0) {
 			steering = false;
@@ -93,27 +108,26 @@ public class VehicleControl : MonoBehaviour {
 		}
 
 		// Ship accelerating
-		if (Input.GetAxisRaw(playerInput + "RT_Button") != 0) {
+		if (accelerationAxis != 0) {
 			accelerating = true;			
 
 			if (localVelocity.z < shipTopSpeed){				
-				ship.velocity += (transform.forward * Input.GetAxisRaw(playerInput + "RT_Button")) * shipAcceleration;
+				ship.velocity += (transform.forward * accelerationAxis) * shipAcceleration;
 			}
 		} 
-		else if (Input.GetAxisRaw(playerInput + "RT_Button") == 0)
-		{
+		else {
 			accelerating = false;
 		}
 
 		// Ship braking
-		if (Input.GetAxisRaw(playerInput + "LT_Button") !=0) {
+		if (brakingAxis !=0) {
 			braking = true;
 
 			if (localVelocity.z > 0) {	
-				ship.velocity -= (transform.forward * Input.GetAxisRaw(playerInput + "LT_Button")) * 0.5f;
+				ship.velocity -= (transform.forward * brakingAxis) * 0.5f;
 			} 
 		}
-		else if(Input.GetAxisRaw(playerInput + "LT_Button") == 0){
+		else {
 			braking = false;
 		}
 	}

@@ -5,7 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	// Public variables
-	public GameObject[] playerShips;
+	public GameObject[] shipSelection;
+	public int numberOfPlayers = 1;
 
 	// Private variables
 
