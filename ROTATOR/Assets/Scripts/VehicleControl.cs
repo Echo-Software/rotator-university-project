@@ -27,6 +27,7 @@ public class VehicleControl : MonoBehaviour {
 	private float shipAcceleration = 1f;
 	private float shipHandlingRate = 30f;
 	private int shipGravityCharges = 3;
+    private int maxGravityCharges = 3;
 
 	// Use this for initialization
 	void Start () {
@@ -53,19 +54,30 @@ public class VehicleControl : MonoBehaviour {
 
 		// Set the ship moving an indistinguishable amount velocity gives an accurate reading
 		ship.velocity = transform.forward * -0.001f;
-	}	
-
-	// Update is called once per frame
-	void Update(){	
-		// This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
-		// Button to shift to other side of track. 
-		if (Input.GetButtonDown(playerInput + "Y_Button") && grounded){
-			shipCollider.isTrigger = true;
-			transform.Translate (new Vector3(0,-6,0), Space.Self);
-			transform.Rotate (0, 0, 180);
-			shipCollider.isTrigger = false;
-		}
 	}
+
+    // Update is called once per frame
+    void Update()
+    {
+        // This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
+        // Button to shift to other side of track. 
+        if (Input.GetButtonDown(playerInput + "Y_Button") && grounded)
+        {
+            if (shipGravityCharges >= 1)
+            {
+                shipCollider.isTrigger = true;
+                transform.Translate(new Vector3(0, -6, 0), Space.Self);
+                transform.Rotate(0, 0, 180);
+                shipCollider.isTrigger = false;
+                shipGravityCharges -= 1;
+            }
+            else
+            {
+                shipCollider.isTrigger = true;
+                shipCollider.isTrigger = false;
+            }
+        }
+    }
 
 	void FixedUpdate() {
 		// Only allow the player to control the ship if they are grounded (track is underneath them)
@@ -131,5 +143,20 @@ public class VehicleControl : MonoBehaviour {
 			braking = false;
 		}
 	}
+
+    void OnTriggerEnter(Collider obj)
+    {
+        if (obj.tag == "GravCharge")
+        {
+            if (shipGravityCharges < maxGravityCharges)
+            { 
+                shipGravityCharges += 1;
+            }
+            else
+            {
+                shipGravityCharges = maxGravityCharges;
+            }
+        }
+    }
 
 }
