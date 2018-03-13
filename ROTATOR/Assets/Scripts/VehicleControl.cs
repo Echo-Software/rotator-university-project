@@ -90,7 +90,7 @@ public class VehicleControl : MonoBehaviour {
 	// Method that handles all of the ships handling
 	void ShipHandling(){
 		// Store the turning, acceleration and braking axis values in variables
-		turnAxis = Input.GetAxis(playerInput + "Horizontal");
+		turnAxis = Input.GetAxisRaw(playerInput + "Horizontal");
 		accelerationAxis = Input.GetAxisRaw (playerInput + "RT_Button");
 		brakingAxis = Input.GetAxisRaw (playerInput + "LT_Button");
 

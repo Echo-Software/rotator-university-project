@@ -26,7 +26,7 @@ public class CameraManager : MonoBehaviour {
 		// Set the cameras that are active and the rects for those cameras based on the number of players selected
 		if (playerNumCheck == 1) {
 			// Loop that sets all unneeded cameras to inactive
-			for (int count = 1; count < 3; count++) {
+			for (int count = 1; count < 4; count++) {
 				cameras [count].gameObject.SetActive (false);
 			}
 
@@ -35,7 +35,7 @@ public class CameraManager : MonoBehaviour {
 		}
 		else if (playerNumCheck == 2){
 			// Loop that sets all unneeded cameras to inactive
-			for (int count = 2; count < 3; count++) {
+			for (int count = 2; count < 4; count++) {
 				cameras [count].gameObject.SetActive (false);
 			}
 
