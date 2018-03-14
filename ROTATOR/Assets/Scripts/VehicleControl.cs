@@ -6,7 +6,16 @@ public class VehicleControl : MonoBehaviour {
 
 	// Public variables
 	public bool grounded;
-	public bool steering;
+
+	// Ship specific stats, with min/max ranges set for making prefabs
+	[Range(28,30)]
+	public float shipTopSpeed = 30f;
+	[Range(0.8f,1)]
+	public float shipAcceleration = 1f;
+	[Range(20,30)]
+	public float shipHandlingRate = 30f;
+	[Range(2,4)]
+	public int maxGravityCharges = 3;
 
 	// Private variables
 	private Rigidbody ship;
@@ -14,20 +23,10 @@ public class VehicleControl : MonoBehaviour {
 	private GameManager gm;
 	private Vector3 localVelocity;
 	private int controllingPlayer;
-	private float turnAxis;
-	private float turningLimit;
-	private float accelerationAxis;
-	private float brakingAxis;
-	private string playerInput;
-	[SerializeField]
-	private bool accelerating, braking = false;
-
-	// Ship specific stats
-	private float shipTopSpeed = 30f;
-	private float shipAcceleration = 1f;
-	private float shipHandlingRate = 30f;
+	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
 	private int shipGravityCharges = 3;
-    private int maxGravityCharges = 3;
+	private string playerInput;
+	private bool accelerating, braking, steering = false;
 
 	// Use this for initialization
 	void Start () {
@@ -77,6 +76,7 @@ public class VehicleControl : MonoBehaviour {
                 shipCollider.isTrigger = false;
             }
         }
+		Debug.Log (localVelocity.z);
     }
 
 	void FixedUpdate() {
@@ -108,11 +108,11 @@ public class VehicleControl : MonoBehaviour {
 		// Ship turning controls
 		if (turnAxis > 0 && (localVelocity.z > 0 || braking)) {
 			steering = true;
-			ship.AddRelativeTorque (Vector3.up * turnAxis * (shipHandlingRate / turningLimit));
+			ship.AddRelativeTorque (Vector3.up * turnAxis * (shipHandlingRate / turningLimit), ForceMode.Acceleration);
 		} 
 		else if (turnAxis < 0 && (localVelocity.z > 0 || braking)) {
 			steering = true;
-			ship.AddRelativeTorque (Vector3.up * turnAxis * (shipHandlingRate / turningLimit));
+			ship.AddRelativeTorque (Vector3.up * turnAxis * (shipHandlingRate / turningLimit), ForceMode.Acceleration);
 		} 
 		else if (turnAxis == 0) {
 			steering = false;
@@ -123,8 +123,8 @@ public class VehicleControl : MonoBehaviour {
 		if (accelerationAxis != 0) {
 			accelerating = true;			
 
-			if (localVelocity.z < shipTopSpeed){				
-				ship.velocity += (transform.forward * accelerationAxis) * shipAcceleration;
+			if (localVelocity.z < shipTopSpeed){		
+				ship.AddRelativeForce ((Vector3.forward * accelerationAxis) * shipAcceleration * 50);
 			}
 		} 
 		else {
@@ -136,7 +136,7 @@ public class VehicleControl : MonoBehaviour {
 			braking = true;
 
 			if (localVelocity.z > 0) {	
-				ship.velocity -= (transform.forward * brakingAxis) * 0.5f;
+				ship.AddRelativeForce ((-Vector3.forward * brakingAxis) * 25);
 			} 
 		}
 		else {

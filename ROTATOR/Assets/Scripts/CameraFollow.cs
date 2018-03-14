@@ -5,8 +5,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour {
 
 	// Public variables
-	public Transform cameraHook;
-	public Transform cameraFocus;
+	public Transform cameraHook, cameraFocus;
 
 	// Private variables
 	private float smoothSpeed = 5f;
