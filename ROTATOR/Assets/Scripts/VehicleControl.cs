@@ -12,7 +12,7 @@ public class VehicleControl : MonoBehaviour {
 	public float shipTopSpeed;
 	[Range(0.5f,1.6f)]
 	public float shipAcceleration;
-	[Range(15,45)]
+	[Range(15,100)]
 	public float shipHandlingRate;
 	[Range(2,4)]
 	public int maxGravityCharges;

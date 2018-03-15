@@ -100,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1335529382730712}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 239, y: -8, z: 12.4}
+  m_LocalPosition: {x: -50.9, y: 3, z: -207.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4612968928046696}
@@ -228,9 +228,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grounded: 0
-  shipTopSpeed: 28.5
+  shipTopSpeed: 29
   shipAcceleration: 0.75
-  shipHandlingRate: 22.5
+  shipHandlingRate: 40
   maxGravityCharges: 4
 --- !u!114 &114846451957060132
 MonoBehaviour:
