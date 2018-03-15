@@ -8,14 +8,14 @@ public class VehicleControl : MonoBehaviour {
 	public bool grounded;
 
 	// Ship specific stats, with min/max ranges set for making prefabs
-	[Range(28,30)]
-	public float shipTopSpeed = 30f;
-	[Range(0.8f,1)]
-	public float shipAcceleration = 1f;
-	[Range(20,30)]
-	public float shipHandlingRate = 30f;
+	[Range(25,50)]
+	public float shipTopSpeed;
+	[Range(0.5f,1.6f)]
+	public float shipAcceleration;
+	[Range(15,45)]
+	public float shipHandlingRate;
 	[Range(2,4)]
-	public int maxGravityCharges = 3;
+	public int maxGravityCharges;
 
 	// Private variables
 	private Rigidbody ship;
@@ -124,7 +124,7 @@ public class VehicleControl : MonoBehaviour {
 			accelerating = true;			
 
 			if (localVelocity.z < shipTopSpeed){		
-				ship.AddRelativeForce ((Vector3.forward * accelerationAxis) * shipAcceleration * 50);
+				ship.AddRelativeForce ((Vector3.forward * accelerationAxis) * shipAcceleration * 50, ForceMode.Acceleration);
 			}
 		} 
 		else {
@@ -136,7 +136,7 @@ public class VehicleControl : MonoBehaviour {
 			braking = true;
 
 			if (localVelocity.z > 0) {	
-				ship.AddRelativeForce ((-Vector3.forward * brakingAxis) * 25);
+				ship.AddRelativeForce ((-Vector3.forward * brakingAxis) * 25, ForceMode.Acceleration);
 			} 
 		}
 		else {

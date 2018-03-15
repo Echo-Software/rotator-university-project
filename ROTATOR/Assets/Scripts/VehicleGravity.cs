@@ -48,11 +48,11 @@ public class VehicleGravity : MonoBehaviour {
 
 			// Keep the ship clinging to the track based on the hit distance of the raycast
 			if (hit.distance > 2.5 && hit.distance < 2.7) {
-				ship.AddForce (-transform.up * (Physics.gravity.magnitude / 10));
+				ship.AddForce (-transform.up * (Physics.gravity.magnitude / 10), ForceMode.Acceleration);
 			} else if (hit.distance > 2.7 && hit.distance < 3.5) {
 				ship.AddForce (-transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
 			} else if (hit.distance < 2.5 && hit.distance > 2.3) {
-				ship.AddForce (transform.up * (Physics.gravity.magnitude / 10));
+				ship.AddForce (transform.up * (Physics.gravity.magnitude / 10), ForceMode.Acceleration);
 			} else if (hit.distance < 2.3 && hit.distance > 1.5) {
 				ship.AddForce (transform.up * (Physics.gravity.magnitude * 2), ForceMode.Acceleration);
 			} else if (hit.distance > 3.5) {
