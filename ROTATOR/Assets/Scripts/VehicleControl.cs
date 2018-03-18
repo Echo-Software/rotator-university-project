@@ -16,17 +16,24 @@ public class VehicleControl : MonoBehaviour {
 	public float shipHandlingRate;
 	[Range(2,4)]
 	public int maxGravityCharges;
+	[Range(2,4)]
+	public float gravityShiftCooldown;
 
 	// Private variables
 	private Rigidbody ship;
 	private BoxCollider shipCollider;
 	private GameManager gm;
 	private Vector3 localVelocity;
-	private int controllingPlayer;
+	private CameraManager camera;
 	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
 	private int shipGravityCharges = 3;
 	private string playerInput;
 	private bool accelerating, braking, steering = false;
+	private bool gravityShiftReady = true;
+
+	// Field serialized for testing purposes
+	[SerializeField]
+	private int controllingPlayer;
 
 	// Use this for initialization
 	void Start () {
@@ -35,20 +42,24 @@ public class VehicleControl : MonoBehaviour {
 		shipCollider = GetComponent<BoxCollider>();
 
 		// Default player control to player1 for testing purposes. Eventually this will need to be assigned by game manager
-		controllingPlayer = 1;
+		// controllingPlayer = 1;
 
 		// Determine which player numberered ship this script is attached to so controls can be properly assigned
 		if (controllingPlayer == 1) {
 			playerInput = "Player1_";
+			camera = GameObject.Find("Player 1 Camera").GetComponent<CameraManager>();
 		}
 		if (controllingPlayer == 2) {
 			playerInput = "Player2_";
+			camera = GameObject.Find("Player 2 Camera").GetComponent<CameraManager>();
 		}
 		if (controllingPlayer == 3) {
 			playerInput = "Player3_";
+			camera = GameObject.Find("Player 3 Camera").GetComponent<CameraManager>();
 		}
 		if (controllingPlayer == 4) {
 			playerInput = "Player4_";
+			camera = GameObject.Find("Player 4 Camera").GetComponent<CameraManager>();
 		}
 
 		// Set the ship moving an indistinguishable amount velocity gives an accurate reading
@@ -60,15 +71,12 @@ public class VehicleControl : MonoBehaviour {
     {
         // This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
         // Button to shift to other side of track. 
-        if (Input.GetButtonDown(playerInput + "Y_Button") && grounded)
+        if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady)
         {
             if (shipGravityCharges >= 1)
             {
-                shipCollider.isTrigger = true;
-                transform.Translate(new Vector3(0, -6, 0), Space.Self);
-                transform.Rotate(0, 0, 180);
-                shipCollider.isTrigger = false;
-                shipGravityCharges -= 1;
+				camera.CameraWhiteFlash ();
+				StartCoroutine("GravityShift");                
             }
             else
             {
@@ -158,5 +166,17 @@ public class VehicleControl : MonoBehaviour {
             }
         }
     }
+
+	IEnumerator GravityShift(){
+		gravityShiftReady = false;
+		yield return new WaitForSeconds (0.25f);
+		shipCollider.isTrigger = true;
+		transform.Translate(new Vector3(0, -6, 0), Space.Self);
+		transform.Rotate(0, 0, 180);
+		shipCollider.isTrigger = false;
+		shipGravityCharges -= 1;
+		yield return new WaitForSeconds (gravityShiftCooldown);
+		gravityShiftReady = true;
+	}
 
 }
