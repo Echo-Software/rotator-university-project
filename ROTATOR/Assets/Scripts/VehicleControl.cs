@@ -18,6 +18,8 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
+	public int shipGravityCharges = 3;
+	public int controllingPlayer;
 
 	// Private variables
 	private Rigidbody ship;
@@ -26,14 +28,9 @@ public class VehicleControl : MonoBehaviour {
 	private Vector3 localVelocity;
 	private CameraManager camera;
 	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
-	private int shipGravityCharges = 3;
 	private string playerInput;
 	private bool accelerating, braking, steering = false;
 	private bool gravityShiftReady = true;
-
-	// Field serialized for testing purposes
-	[SerializeField]
-	private int controllingPlayer;
 
 	// Use this for initialization
 	void Start () {
@@ -177,6 +174,18 @@ public class VehicleControl : MonoBehaviour {
 		shipGravityCharges -= 1;
 		yield return new WaitForSeconds (gravityShiftCooldown);
 		gravityShiftReady = true;
+	}
+
+	public string Speed(){
+		if (localVelocity.z < 0.01) {
+			return "0";
+		} 
+		if (localVelocity.z > shipTopSpeed - 1) {
+			return Mathf.Round(shipTopSpeed * 10).ToString();
+		}
+		else {
+			return Mathf.Round(localVelocity.z * 10).ToString();			
+		}
 	}
 
 }

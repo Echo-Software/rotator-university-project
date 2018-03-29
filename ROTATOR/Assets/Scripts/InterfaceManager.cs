@@ -2,12 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class InterfaceManager : MonoBehaviour {
 
 	// Public Variables
 	public Camera[] cameras;
 	public Image logo;
+
+	[Header("Player 1 UI Elements (2 split)")]
+	public GameObject[] p1Interface;
+
+	[Header("Player 2 UI Elements (2 split)")]
+	public GameObject[] p2Interface;
+
+	[Header("Player 1 UI Elements (3+ split)")]
+	public GameObject[] p1Interface3Plus;
+
+	[Header("Player 2 UI Elements (3+ split)")]
+	public GameObject[] p2Interface3Plus;
+
+	[Header("Player 3 UI Elements")]
+	public GameObject[] p3Interface;
+
+	[Header("Player 4 UI Elements")]
+	public GameObject[] p4Interface;
 
 	// Private Variables
 	private GameManager gm;
@@ -18,6 +37,11 @@ public class InterfaceManager : MonoBehaviour {
 		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
 		playerNumCheck = gm.numberOfPlayers;
 		CameraPositioning ();
+		InterfaceInitialization ();
+	}
+
+	void Update(){
+		InterfaceUpdate ();
 	}
 
 	void CameraPositioning(){
@@ -62,4 +86,42 @@ public class InterfaceManager : MonoBehaviour {
 		}
 	}
 
+	void InterfaceInitialization(){
+		if (playerNumCheck == 2) {
+
+		} 
+		else if (playerNumCheck == 3) {
+
+		} 
+		else if (playerNumCheck == 4) {
+			p1Interface3Plus [0].SetActive (true);	
+		}
+	}
+
+	void InterfaceUpdate(){
+		if (playerNumCheck == 2) {
+
+		} 
+		else if (playerNumCheck == 3) {
+
+		} 
+		else if (playerNumCheck == 4) {
+			// Player 1 UI updates
+			float p1lap = gm.ReturnTime (0, "Lap");
+			float p1total = gm.ReturnTime (0, "Total");
+
+			p1Interface3Plus [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().Speed ();
+			p1Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
+			p1Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
+			p1Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
+		}
+	}
+
+	private string FormatTime(float timer){
+		int minutes = Mathf.FloorToInt(timer / 60);
+		int seconds = Mathf.FloorToInt(timer % 60);
+		int milliseconds = Mathf.FloorToInt ((timer * 100) % 100);
+
+		return minutes.ToString("00") + ":" + seconds.ToString("00") + "." + milliseconds.ToString("00");
+	}
 }

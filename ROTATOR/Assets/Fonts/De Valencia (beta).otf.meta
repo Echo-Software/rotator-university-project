@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: a810c9ed6d6aa094ba343d188350dc3b
+timeCreated: 1522335444
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: De Valencia
+  fontNames:
+  - De Valencia
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
