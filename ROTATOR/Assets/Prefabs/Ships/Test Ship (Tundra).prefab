@@ -91,7 +91,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4507344912715912}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4507344912715912
 Transform:
@@ -100,12 +100,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1335529382730712}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -50.9, y: 3, z: -207.6}
+  m_LocalPosition: {x: -50.9, y: 3.4, z: -207.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4612968928046696}
   - {fileID: 4800381577313002}
   - {fileID: 4309017111938564}
+  - {fileID: 4612968928046696}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -120,7 +120,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4507344912715912}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &4800381577313002
 Transform:
@@ -133,7 +133,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4507344912715912}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23669913737719362
 MeshRenderer:
@@ -232,6 +232,11 @@ MonoBehaviour:
   shipAcceleration: 0.75
   shipHandlingRate: 40
   maxGravityCharges: 4
+  gravityShiftCooldown: 2.5
+  shipGravityCharges: 0
+  controllingPlayer: 4
+  cameraHook: {fileID: 1011201720519326}
+  cameraFocus: {fileID: 1023843631980328}
 --- !u!114 &114846451957060132
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -18,8 +18,9 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
-	public int shipGravityCharges = 3;
-	public int controllingPlayer;
+	public int shipGravityCharges, controllingPlayer;
+	public GameObject cameraHook, cameraFocus;
+
 
 	// Private variables
 	private Rigidbody ship;
@@ -44,23 +45,30 @@ public class VehicleControl : MonoBehaviour {
 		// Determine which player numberered ship this script is attached to so controls can be properly assigned
 		if (controllingPlayer == 1) {
 			playerInput = "Player1_";
-			camera = GameObject.Find("Player 1 Camera").GetComponent<CameraManager>();
+			camera = GameObject.Find("Camera 1").GetComponent<CameraManager>();
+			camera.AssignCameraHooks (cameraHook, cameraFocus);
 		}
 		if (controllingPlayer == 2) {
 			playerInput = "Player2_";
-			camera = GameObject.Find("Player 2 Camera").GetComponent<CameraManager>();
+			camera = GameObject.Find("Camera 2").GetComponent<CameraManager>();
+			camera.AssignCameraHooks (cameraHook, cameraFocus);
 		}
 		if (controllingPlayer == 3) {
 			playerInput = "Player3_";
-			camera = GameObject.Find("Player 3 Camera").GetComponent<CameraManager>();
+			camera = GameObject.Find("Camera 3").GetComponent<CameraManager>();
+			camera.AssignCameraHooks (cameraHook, cameraFocus);
 		}
 		if (controllingPlayer == 4) {
 			playerInput = "Player4_";
-			camera = GameObject.Find("Player 4 Camera").GetComponent<CameraManager>();
+			camera = GameObject.Find("Camera 4").GetComponent<CameraManager>();
+			camera.AssignCameraHooks (cameraHook, cameraFocus);
 		}
 
 		// Set the ship moving an indistinguishable amount velocity gives an accurate reading
 		ship.velocity = transform.forward * -0.001f;
+
+		// Set the ships initial gravity charges based on their max amount
+		shipGravityCharges = maxGravityCharges;
 	}
 
     // Update is called once per frame
@@ -81,7 +89,7 @@ public class VehicleControl : MonoBehaviour {
                 shipCollider.isTrigger = false;
             }
         }
-		Debug.Log (localVelocity.z);
+
     }
 
 	void FixedUpdate() {

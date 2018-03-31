@@ -7,14 +7,17 @@ public class CameraManager : MonoBehaviour {
 	// Public variables
 	public Transform cameraHook, cameraFocus;
 	public GameObject cameraFillPlane;
+	public int cameraNumber;
 
 	// Private variables
+	private GameManager gm;
 	private float smoothSpeed = 5f;
 	private Quaternion fixedRotation;
 	private Renderer fillSprite;
 	private Color tempColor;
 
 	void Start(){		
+		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
 		fillSprite = cameraFillPlane.GetComponent<Renderer> ();
 		transform.position = cameraHook.position;
 		tempColor = fillSprite.material.color;
@@ -31,6 +34,11 @@ public class CameraManager : MonoBehaviour {
 		// transform.up = Vector3.Lerp (transform.up, cameraHook.up, smoothSpeed * Time.deltaTime);
 		transform.LookAt (cameraFocus, cameraHook.up);
 	} 
+
+	public void AssignCameraHooks(GameObject hook, GameObject focus){		
+		cameraHook = hook.transform;
+		cameraFocus = focus.transform;
+	}
 
 	public void CameraWhiteFlash(){	
 		StartCoroutine ("GradualWhiteFlash");

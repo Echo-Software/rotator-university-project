@@ -18,9 +18,15 @@ public class GameManager : MonoBehaviour {
 		playerShipSelection = new GameObject[numberOfPlayers];
 		GameObject[] temp = GameObject.FindGameObjectsWithTag ("Player");
 
-		for (int count = 0; count < numberOfPlayers; count++) {
-			playerShipSelection [temp [count].GetComponent<VehicleControl> ().controllingPlayer - 1] = temp [count];
-		}			
+		// Arrange all ships by player control
+		for (int count = 0; count < numberOfPlayers; count++){
+			for (int count2 = 0; count2 < numberOfPlayers; count2++) {
+				if (temp [count2].GetComponent<VehicleControl> ().controllingPlayer == count+1) {
+					playerShipSelection[count] = temp [count2];
+				}
+			}
+		}
+
 	}
 	
 	// Update is called once per frame
