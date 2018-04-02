@@ -6,15 +6,22 @@ public class GameManager : MonoBehaviour {
 
 	// Public variables
 	public GameObject[] playerShipSelection;
+	public GameObject[] checkpoints;
 	public int numberOfPlayers = 4;
 	private float[] lapTimers = new float[4];
 	private float[] totalTimers = new float[4];
+	[SerializeField]
+	private float[] p1laps, p2laps, p3laps, p4laps;
 
 	// Private variables
 
 
 	// Use this for initialization
 	void Start() {
+		p1laps = new float[3];
+		p2laps = new float[3];
+		p3laps = new float[3];
+		p4laps = new float[3];
 		playerShipSelection = new GameObject[numberOfPlayers];
 		GameObject[] temp = GameObject.FindGameObjectsWithTag ("Player");
 
@@ -68,4 +75,23 @@ public class GameManager : MonoBehaviour {
 			return 0;
 		}
 	}
+
+	public void NewLap(int player, int lapCount){
+		if (lapCount < 4) {
+			if (player == 1) {
+				p1laps [lapCount - 1] = lapTimers [player - 1];
+			}
+			if (player == 2) {
+				p2laps [lapCount - 1] = lapTimers [player - 1];
+			}
+			if (player == 3) {
+				p3laps [lapCount - 1] = lapTimers [player - 1];
+			}
+			if (player == 4) {
+				p4laps [lapCount - 1] = lapTimers [player - 1];
+			}
+			lapTimers [player - 1] = 0;
+		}
+	}
+
 }

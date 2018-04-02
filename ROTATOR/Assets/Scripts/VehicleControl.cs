@@ -32,10 +32,12 @@ public class VehicleControl : MonoBehaviour {
 	private string playerInput;
 	private bool accelerating, braking, steering = false;
 	private bool gravityShiftReady = true;
+	private int nextCheckpoint, lapCount;
 
 	// Use this for initialization
 	void Start () {
-		// Get the rigidbody & box collider for the attached object
+		// Get the rigidbody & box collider for the attached object, also assign the game manager
+		gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 		ship = GetComponent<Rigidbody>();
 		shipCollider = GetComponent<BoxCollider>();
 
@@ -69,6 +71,10 @@ public class VehicleControl : MonoBehaviour {
 
 		// Set the ships initial gravity charges based on their max amount
 		shipGravityCharges = maxGravityCharges;
+
+		// Set the initial lap and checkpoint counters
+		lapCount = 1;
+		nextCheckpoint = 1;
 	}
 
     // Update is called once per frame
@@ -89,7 +95,6 @@ public class VehicleControl : MonoBehaviour {
                 shipCollider.isTrigger = false;
             }
         }
-
     }
 
 	void FixedUpdate() {
@@ -159,6 +164,7 @@ public class VehicleControl : MonoBehaviour {
 
     void OnTriggerEnter(Collider obj)
     {
+		// Collision triggers for gravity charge item
         if (obj.tag == "GravCharge")
         {
             if (shipGravityCharges < maxGravityCharges)
@@ -170,6 +176,19 @@ public class VehicleControl : MonoBehaviour {
                 shipGravityCharges = maxGravityCharges;
             }
         }
+
+		// Collision triggers for lap checkpoint
+		if (obj.gameObject.tag == "Checkpoint") {
+			if (obj.gameObject.name == "Checkpoint " + nextCheckpoint) {
+				nextCheckpoint++;
+			} 
+			else if (nextCheckpoint > gm.checkpoints.Length - 1 && obj.gameObject.name == "Finish Line") {
+				gm.NewLap (controllingPlayer, lapCount);
+				lapCount++;
+				nextCheckpoint = 1;
+
+			}
+		}
     }
 
 	IEnumerator GravityShift(){
@@ -193,6 +212,15 @@ public class VehicleControl : MonoBehaviour {
 		}
 		else {
 			return Mathf.Round(localVelocity.z * 10).ToString();			
+		}
+	}
+
+	public string LapCount(){
+		if (lapCount < 4) {
+			return lapCount.ToString () + "/3";			
+		} 
+		else {
+			return "FIN";
 		}
 	}
 
