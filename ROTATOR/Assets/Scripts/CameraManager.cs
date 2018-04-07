@@ -19,8 +19,8 @@ public class CameraManager : MonoBehaviour {
 	void Start(){		
 		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
 		fillSprite = cameraFillPlane.GetComponent<Renderer> ();
-		transform.position = cameraHook.position;
 		tempColor = fillSprite.material.color;
+		ResetCameraPosition ();
 	}
 
 	void Update(){
@@ -44,6 +44,10 @@ public class CameraManager : MonoBehaviour {
 		StartCoroutine ("GradualWhiteFlash");
 	}
 
+	public void ResetCameraPosition(){
+		transform.position = cameraHook.position;
+	}
+
 	IEnumerator GradualWhiteFlash(){
 		bool complete = false;
 		bool faded = false;
@@ -54,7 +58,6 @@ public class CameraManager : MonoBehaviour {
 				tempColor.a = alpha / 15;
 				fillSprite.material.color = tempColor;
 				alpha++;
-				yield return new WaitForSeconds (0.01f);
 
 				if (alpha == 15) {
 					faded = true;

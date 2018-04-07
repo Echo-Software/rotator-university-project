@@ -21,16 +21,17 @@ public class VehicleControl : MonoBehaviour {
 	public int shipGravityCharges, controllingPlayer;
 	public GameObject cameraHook, cameraFocus;
 
-
 	// Private variables
 	private Rigidbody ship;
 	private BoxCollider shipCollider;
 	private GameManager gm;
 	private Vector3 localVelocity;
 	private CameraManager camera;
+	[SerializeField]
+	private GameObject lastCheckpoint;
 	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
 	private string playerInput;
-	private bool accelerating, braking, steering = false;
+	private bool accelerating, braking, steering, respawning, invincible = false;
 	private bool gravityShiftReady = true;
 	private int nextCheckpoint, lapCount;
 
@@ -40,9 +41,6 @@ public class VehicleControl : MonoBehaviour {
 		gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 		ship = GetComponent<Rigidbody>();
 		shipCollider = GetComponent<BoxCollider>();
-
-		// Default player control to player1 for testing purposes. Eventually this will need to be assigned by game manager
-		// controllingPlayer = 1;
 
 		// Determine which player numberered ship this script is attached to so controls can be properly assigned
 		if (controllingPlayer == 1) {
@@ -95,11 +93,17 @@ public class VehicleControl : MonoBehaviour {
                 shipCollider.isTrigger = false;
             }
         }
+
+		// Button to respawn (self-destruct) ship
+		if (Input.GetButtonDown(playerInput + "Back_Button") && !invincible)
+		{
+			RespawnShip ();
+		}
     }
 
 	void FixedUpdate() {
-		// Only allow the player to control the ship if they are grounded (track is underneath them)
-		if (grounded) {
+		// Only allow the player to control the ship if they are grounded (track is underneath them) and not respawning
+		if (grounded && !respawning) {
 			ShipHandling ();
 		}
 
@@ -181,12 +185,13 @@ public class VehicleControl : MonoBehaviour {
 		if (obj.gameObject.tag == "Checkpoint") {
 			if (obj.gameObject.name == "Checkpoint " + nextCheckpoint) {
 				nextCheckpoint++;
+				lastCheckpoint = obj.gameObject;
 			} 
 			else if (nextCheckpoint > gm.checkpoints.Length - 1 && obj.gameObject.name == "Finish Line") {
 				gm.NewLap (controllingPlayer, lapCount);
 				lapCount++;
 				nextCheckpoint = 1;
-
+				lastCheckpoint = obj.gameObject;
 			}
 		}
     }
@@ -222,6 +227,45 @@ public class VehicleControl : MonoBehaviour {
 		else {
 			return "FIN";
 		}
+	}
+
+	public void RespawnShip(){
+		if (lastCheckpoint.name == "Camera Hook") {
+			Debug.Log ("No passed checkpoint to respawn at");
+		} 
+		else {
+			// Stop the players velocity after they start the respawning process
+			ship.angularVelocity = Vector3.zero;
+			ship.velocity = Vector3.zero;
+			StartCoroutine (TimedRespawn (lastCheckpoint));
+		}
+	}
+
+	IEnumerator TimedRespawn(GameObject respawn){
+		// Sets the player invicible and respawning states to true 
+		invincible = true;
+		respawning = true;
+
+		// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
+		// they passed, making sure to translate them 3 units away from the track so they don't clip
+		yield return new WaitForSeconds (2f);
+		gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y, respawn.transform.position.z);
+		transform.Translate (new Vector3 (0, 3, 0), Space.Self);
+
+		// When matching the rotation angles, don't match the z rotation as the ship needs to retain it's flipped/unflipped state
+		gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, gameObject.transform.eulerAngles.z);
+
+		// Set the velocity of the ship to zero again, to make sure the ship doesn't drift after respawning
+		ship.angularVelocity = Vector3.zero;
+		ship.velocity = Vector3.zero;
+
+		// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
+		camera.ResetCameraPosition ();
+		respawning = false;
+
+		// 2 seconds of invincibility so the player can't get repeatedly blown up etc
+		yield return new WaitForSeconds (2f);
+		invincible = false;
 	}
 
 }

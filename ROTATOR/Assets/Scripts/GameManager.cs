@@ -7,21 +7,22 @@ public class GameManager : MonoBehaviour {
 	// Public variables
 	public GameObject[] playerShipSelection;
 	public GameObject[] checkpoints;
+	public Transform[] startingGrid = new Transform[4];
 	public int numberOfPlayers = 4;
+
+	// Private variables
 	private float[] lapTimers = new float[4];
 	private float[] totalTimers = new float[4];
 	[SerializeField]
-	private float[] p1laps, p2laps, p3laps, p4laps;
-
-	// Private variables
+	private float[] player1Laps, player2Laps, player3Laps, player4Laps;
 
 
 	// Use this for initialization
 	void Start() {
-		p1laps = new float[3];
-		p2laps = new float[3];
-		p3laps = new float[3];
-		p4laps = new float[3];
+		player1Laps = new float[3];
+		player2Laps = new float[3];
+		player3Laps = new float[3];
+		player4Laps = new float[3];
 		playerShipSelection = new GameObject[numberOfPlayers];
 		GameObject[] temp = GameObject.FindGameObjectsWithTag ("Player");
 
@@ -34,10 +35,20 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+		// Sort ship starting grid positions based on the player number
+		for (int count = 0; count < numberOfPlayers; count++) {
+			playerShipSelection [count].transform.position = startingGrid [count].position;
+		}
+
 	}
 	
 	// Update is called once per frame
 	void Update() {
+		RunTimers ();
+	}
+
+	// Keeps lap and total timers running based on number of players
+	private void RunTimers(){
 		if (numberOfPlayers == 2) {
 			lapTimers [0] += Time.deltaTime;
 			lapTimers [1] += Time.deltaTime;
@@ -64,6 +75,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	// Returns the requested timer type for use in the interface display for a specified player
 	public float ReturnTime(int playerNumber, string type){
 		if (type == "Lap") {
 			return lapTimers [playerNumber];
@@ -76,19 +88,20 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	// Stores the current lap for the specified player in an array and then resets the lap timer for 0 for the next lap
 	public void NewLap(int player, int lapCount){
 		if (lapCount < 4) {
 			if (player == 1) {
-				p1laps [lapCount - 1] = lapTimers [player - 1];
+				player1Laps [lapCount - 1] = lapTimers [player - 1];
 			}
 			if (player == 2) {
-				p2laps [lapCount - 1] = lapTimers [player - 1];
+				player2Laps [lapCount - 1] = lapTimers [player - 1];
 			}
 			if (player == 3) {
-				p3laps [lapCount - 1] = lapTimers [player - 1];
+				player3Laps [lapCount - 1] = lapTimers [player - 1];
 			}
 			if (player == 4) {
-				p4laps [lapCount - 1] = lapTimers [player - 1];
+				player4Laps [lapCount - 1] = lapTimers [player - 1];
 			}
 			lapTimers [player - 1] = 0;
 		}
