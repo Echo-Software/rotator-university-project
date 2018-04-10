@@ -191,6 +191,7 @@ public class VehicleControl : MonoBehaviour {
 				gm.NewLap (controllingPlayer, lapCount);
 				lapCount++;
 				nextCheckpoint = 1;
+				shipGravityCharges = maxGravityCharges;
 				lastCheckpoint = obj.gameObject;
 			}
 		}

@@ -58,6 +58,7 @@ public class CameraManager : MonoBehaviour {
 				tempColor.a = alpha / 15;
 				fillSprite.material.color = tempColor;
 				alpha++;
+				yield return new WaitForSeconds (0.01f);
 
 				if (alpha == 15) {
 					faded = true;
