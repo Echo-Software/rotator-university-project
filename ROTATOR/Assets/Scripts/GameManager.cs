@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		RunTimers ();
+		ShipPosition ();
 	}
 
 	// Keeps lap and total timers running based on number of players
@@ -72,6 +73,46 @@ public class GameManager : MonoBehaviour {
 			totalTimers [1] += Time.deltaTime;
 			totalTimers [2] += Time.deltaTime;
 			totalTimers [3] += Time.deltaTime;
+		}
+	}
+
+	// Sorts the player position based on lap count, checkpoint count and distance from next checkpoint
+	private void ShipPosition(){
+		// All players start at "last" place, based on the number of players
+		int tempPosition = numberOfPlayers;
+
+		// Start move players up in position based on a series of checks within a series of nested loop/if statements
+		for (int count = 0; count < numberOfPlayers; count++) {
+			int count2;
+			for (count2 = 0; count2 < numberOfPlayers; count2++) {
+				// Stop the player from checking against themselves
+				if (count != count2){
+					// Check if the player has a higher lap count to determine position
+					if (playerShipSelection [count].GetComponent<VehicleControl> ().lapCount > playerShipSelection [count2].GetComponent<VehicleControl> ().lapCount) {
+						tempPosition--;
+					}
+					// If the player has the same lap count as the player being checked against, move onto the next set of tests
+					else if (playerShipSelection [count].GetComponent<VehicleControl> ().lapCount == playerShipSelection [count2].GetComponent<VehicleControl> ().lapCount) {
+						// Check if the player is further along the lap checkpoints to determine position
+						if(playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint > playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint) {
+							tempPosition--;
+						}
+						// If the player is on the same checkpoint as the player being checked against, move onto the next set of tests
+						else if(playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint == playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint) {
+							// Check the distance to the next checkpoint against the player being checked against to determine position
+							if (Vector3.Distance (playerShipSelection [count].transform.position, checkpoints [playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint].transform.position) <
+								Vector3.Distance (playerShipSelection [count2].transform.position, checkpoints [playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint].transform.position)) {							
+								tempPosition--;
+							}
+						}
+					}
+				}
+			}
+
+			// After all the tests have been run through set the players position to the result of all the checks and then reset the tempPosition and count2 variables for future checks
+			playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition = tempPosition;
+			tempPosition = numberOfPlayers;
+			count2 = 0;
 		}
 	}
 

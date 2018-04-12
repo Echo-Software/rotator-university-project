@@ -18,7 +18,7 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
-	public int shipGravityCharges, controllingPlayer;
+	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount;
 	public GameObject cameraHook, cameraFocus;
 
 	// Private variables
@@ -33,7 +33,6 @@ public class VehicleControl : MonoBehaviour {
 	private string playerInput;
 	private bool accelerating, braking, steering, respawning, invincible = false;
 	private bool gravityShiftReady = true;
-	private int nextCheckpoint, lapCount;
 
 	// Use this for initialization
 	void Start () {
@@ -70,9 +69,10 @@ public class VehicleControl : MonoBehaviour {
 		// Set the ships initial gravity charges based on their max amount
 		shipGravityCharges = maxGravityCharges;
 
-		// Set the initial lap and checkpoint counters
+		// Set the initial lap, checkpoint and position variables
 		lapCount = 1;
 		nextCheckpoint = 1;
+		currentPosition = controllingPlayer;
 	}
 
     // Update is called once per frame
@@ -221,12 +221,30 @@ public class VehicleControl : MonoBehaviour {
 		}
 	}
 
-	public string LapCount(){
+	public string ReturnLap(){
 		if (lapCount < 4) {
 			return lapCount.ToString () + "/3";			
 		} 
 		else {
 			return "FIN";
+		}
+	}
+
+	public string ReturnPosition(){
+		if (currentPosition == 1) {
+			return currentPosition + "ST";
+		} 
+		else if (currentPosition == 2) {
+			return currentPosition + "ND";
+		} 
+		else if (currentPosition == 3) {
+			return currentPosition + "RD";
+		} 
+		else if (currentPosition == 4) {
+			return currentPosition + "TH";
+		} 
+		else {
+			return "";
 		}
 	}
 

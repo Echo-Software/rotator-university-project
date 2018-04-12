@@ -112,7 +112,8 @@ public class InterfaceManager : MonoBehaviour {
 			p1total = gm.ReturnTime (0, "Total");
 
 			p1Interface [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().Speed ();
-			p1Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().LapCount ();
+			p1Interface [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnPosition ();
+			p1Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnLap ();
 			p1Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
 			p1Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
 			p1Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -122,7 +123,8 @@ public class InterfaceManager : MonoBehaviour {
 			p2total = gm.ReturnTime (0, "Total");
 
 			p2Interface [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().Speed ();
-			p2Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().LapCount ();
+			p2Interface [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnPosition ();
+			p2Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnLap ();
 			p2Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2lap);
 			p2Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2total);
 			p2Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -133,7 +135,8 @@ public class InterfaceManager : MonoBehaviour {
 			p1total = gm.ReturnTime (0, "Total");
 
 			p1Interface3Plus [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().Speed ();
-			p1Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().LapCount ();
+			p1Interface3Plus [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnPosition ();
+			p1Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnLap ();
 			p1Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
 			p1Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
 			p1Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -143,7 +146,8 @@ public class InterfaceManager : MonoBehaviour {
 			p2total = gm.ReturnTime (0, "Total");
 
 			p2Interface3Plus [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().Speed ();
-			p2Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().LapCount ();
+			p2Interface3Plus [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnPosition ();
+			p2Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnLap ();
 			p2Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2lap);
 			p2Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2total);
 			p2Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -153,7 +157,8 @@ public class InterfaceManager : MonoBehaviour {
 			p3total = gm.ReturnTime (0, "Total");
 
 			p3Interface [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().Speed ();
-			p3Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().LapCount ();
+			p3Interface [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().ReturnPosition ();
+			p3Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().ReturnLap ();
 			p3Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3lap);
 			p3Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3total);
 			p3Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -165,7 +170,8 @@ public class InterfaceManager : MonoBehaviour {
 			p1total = gm.ReturnTime (0, "Total");
 
 			p1Interface3Plus [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().Speed ();
-			p1Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().LapCount ();
+			p1Interface3Plus [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnPosition ();
+			p1Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnLap ();
 			p1Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
 			p1Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
 			p1Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -175,7 +181,8 @@ public class InterfaceManager : MonoBehaviour {
 			p2total = gm.ReturnTime (0, "Total");
 
 			p2Interface3Plus [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().Speed ();
-			p2Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().LapCount ();
+			p2Interface3Plus [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnPosition ();
+			p2Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnLap ();
 			p2Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2lap);
 			p2Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2total);
 			p2Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -185,7 +192,8 @@ public class InterfaceManager : MonoBehaviour {
 			p3total = gm.ReturnTime (0, "Total");
 
 			p3Interface [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().Speed ();
-			p3Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl> ().LapCount ();
+			p3Interface [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().ReturnPosition ();
+			p3Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl> ().ReturnLap ();
 			p3Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3lap);
 			p3Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3total);
 			p3Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().shipGravityCharges.ToString();
@@ -195,7 +203,8 @@ public class InterfaceManager : MonoBehaviour {
 			p4total = gm.ReturnTime (0, "Total");
 
 			p4Interface [1].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().Speed ();
-			p4Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().LapCount ();
+			p4Interface [2].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().ReturnPosition ();
+			p4Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().ReturnLap ();
 			p4Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p4lap);
 			p4Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p4total);
 			p4Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().shipGravityCharges.ToString();
