@@ -18,12 +18,13 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
-	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount;
+	public bool invincible = false;
+	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount, missileCount;
 	public GameObject cameraHook, cameraFocus;
+	public BoxCollider shipCollider;
 
 	// Private variables
 	private Rigidbody ship;
-	private BoxCollider shipCollider;
 	private GameManager gm;
 	private PowerupManager pm;
 	private Vector3 localVelocity;
@@ -33,7 +34,7 @@ public class VehicleControl : MonoBehaviour {
 	private int weaponLevel;
 	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
 	private string playerInput, currentWeapon;
-	private bool accelerating, braking, steering, respawning, invincible, forcedAcceleration = false;
+	private bool accelerating, braking, steering, respawning, forcedAcceleration, stunned = false;
 	private bool gravityShiftReady = true;
 
 	// Use this for initialization
@@ -72,7 +73,7 @@ public class VehicleControl : MonoBehaviour {
 		// Set the ships initial gravity charges based on their max amount
 		shipGravityCharges = maxGravityCharges;
 
-		// Set the initial lap, checkpoint, position and weapon variables
+		// Set some more variables on start
 		lapCount = 1;
 		nextCheckpoint = 1;
 		currentPosition = controllingPlayer;
@@ -104,12 +105,25 @@ public class VehicleControl : MonoBehaviour {
 		{
 			RespawnShip ();
 		}
+
+		// Button to fire current weapon
+		if (Input.GetButtonDown(playerInput + "A_Button") && grounded && !respawning)
+		{
+			if (currentWeapon != "NO WEAPON") {
+				pm.FireWeapon (gameObject, currentWeapon, weaponLevel);
+			}
+		}
     }
 
 	void FixedUpdate() {
-		// Only allow the player to control the ship if they are grounded (track is underneath them) and not respawning
-		if (grounded && !respawning) {
+		// Only allow the player to control the ship if they are grounded (track is underneath them) and not respawning or stunned
+		if (grounded && !respawning && !stunned) {
 			ShipHandling ();
+		}
+
+		// If the player is no longer grounded, respawn them at the last checkpoint as they must be off the track at this point
+		if (!grounded){
+			RespawnShip ();
 		}
 
 	}
@@ -216,9 +230,12 @@ public class VehicleControl : MonoBehaviour {
 		// Collision triggers for levelup boxes
 		if (obj.gameObject.tag == "Levelup") {
 			StartCoroutine (pm.RespawnPickup(obj.gameObject));
+			if (currentWeapon == "MISSILE" && weaponLevel == 2) {
+				missileCount = 3;
+			}
 			if (currentWeapon != "ERASER" && currentWeapon != "NO WEAPON"){				
 				if (currentWeapon == "MISSILE" && weaponLevel == 3) {
-					// Replenish missile count here
+					missileCount = 3;
 				} 
 				else if (weaponLevel < 3) {
 					weaponLevel++;
@@ -229,6 +246,25 @@ public class VehicleControl : MonoBehaviour {
 		// Collision triggers for track speed boosters
 		if (obj.gameObject.tag == "Speedup") {
 			StartCoroutine ("SpeedUp");
+		}
+
+		// Collision triggers for weapons
+		if (obj.gameObject.tag == "Weapon" && !invincible && !respawning && grounded) {			
+			// Handle the objects that "stun" players first
+			if (obj.gameObject.name == "Pulse LV1 Prefab(Clone)" || obj.gameObject.name == "Mines LV1 Prefab(Clone)" || obj.gameObject.name == "Mines LV2 Prefab(Clone)") {
+				StartCoroutine ("Stun");
+			} 
+			// Shield level 2 has a pushback effect, but shouldn't stun or destroy anything
+			else if (obj.gameObject.name == "Shield LV2 Prefab(Clone)") {
+				Vector3 oppositeForce = (this.transform.position - obj.transform.position).normalized;
+				ship.AddForce (oppositeForce * 17.5f, ForceMode.VelocityChange);
+			}
+			else{
+				// replace with some sort of "destroy ship" method eventually
+				RespawnShip ();
+			}
+
+
 		}
 			
     }
@@ -246,15 +282,20 @@ public class VehicleControl : MonoBehaviour {
 	}
 
 	public string Speed(){
-		if (localVelocity.z < 0.01) {
-			return "0";
+		if (!stunned) {
+			if (localVelocity.z < 0.01) {
+				return "0";
+			} 
+			if (localVelocity.z > shipTopSpeed - 1) {
+				return Mathf.Round (shipTopSpeed * 10).ToString ();
+			} else {
+				return Mathf.Round (localVelocity.z * 10).ToString ();			
+			}
 		} 
-		if (localVelocity.z > shipTopSpeed - 1) {
-			return Mathf.Round(shipTopSpeed * 10).ToString();
-		}
 		else {
-			return Mathf.Round(localVelocity.z * 10).ToString();			
+			return "XXX";
 		}
+
 	}
 
 	// Method that interface manager uses to get the current weapon
@@ -262,9 +303,18 @@ public class VehicleControl : MonoBehaviour {
 		if (currentWeapon == "NO WEAPON" || currentWeapon == "ERASER") {
 			return currentWeapon;
 		} 
+		else if (currentWeapon == "MISSILE" && weaponLevel == 3){
+			return currentWeapon + " LV." + weaponLevel.ToString() + "\n" + missileCount.ToString() + " MISSILES LEFT";
+		}
 		else {
 			return currentWeapon + " LV." + weaponLevel.ToString();
 		}
+	}
+
+	public void ResetWeapon(){
+		currentWeapon = "NO WEAPON";
+		weaponLevel = 1;
+		missileCount = 3;
 	}
 
 	public string ReturnLap(){
@@ -333,6 +383,16 @@ public class VehicleControl : MonoBehaviour {
 		invincible = false;
 	}
 
+	IEnumerator Stun(){	
+		stunned = true;
+		invincible = true;
+		ship.angularVelocity = Vector3.zero;
+		ship.velocity = Vector3.zero;
+		yield return new WaitForSeconds (1.5f);
+		stunned = false;
+		invincible = false;
+	}
+
 	IEnumerator SpeedUp(){
 		float tempShipSpeed = shipTopSpeed;
 		float tempShipAcceleration = shipAcceleration;
@@ -344,6 +404,12 @@ public class VehicleControl : MonoBehaviour {
 		forcedAcceleration = false;
 		shipTopSpeed = tempShipSpeed;
 		shipAcceleration = tempShipAcceleration;
+	}
+
+	public IEnumerator ActivateShield(float length){
+		invincible = true;
+		yield return new WaitForSeconds (length);
+		invincible = false;		
 	}
 
 }

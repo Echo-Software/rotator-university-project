@@ -100,8 +100,8 @@ public class GameManager : MonoBehaviour {
 						// If the player is on the same checkpoint as the player being checked against, move onto the next set of tests
 						else if(playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint == playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint) {
 							// Check the distance to the next checkpoint against the player being checked against to determine position
-							if (Vector3.Distance (playerShipSelection [count].transform.position, checkpoints [playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint].transform.position) <
-								Vector3.Distance (playerShipSelection [count2].transform.position, checkpoints [playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint].transform.position)) {							
+							if (Vector3.Distance (playerShipSelection [count].transform.position, checkpoints [playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint-1].transform.position) <
+								Vector3.Distance (playerShipSelection [count2].transform.position, checkpoints [playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint-1].transform.position)) {							
 								tempPosition--;
 							}
 						}

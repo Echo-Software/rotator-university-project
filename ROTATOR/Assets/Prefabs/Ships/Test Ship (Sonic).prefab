@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4944594033078222}
   - component: {fileID: 33622771359333152}
-  - component: {fileID: 136646781882361144}
   - component: {fileID: 23345560282463396}
   - component: {fileID: 54042242103434582}
   - component: {fileID: 138975682551736550}
@@ -244,24 +243,17 @@ MonoBehaviour:
   shipHandlingRate: 100
   maxGravityCharges: 3
   gravityShiftCooldown: 2.5
+  invincible: 0
   shipGravityCharges: 0
   controllingPlayer: 3
+  currentPosition: 0
+  nextCheckpoint: 0
+  lapCount: 0
+  missileCount: 0
   cameraHook: {fileID: 1314466857614306}
   cameraFocus: {fileID: 1338844150685888}
+  shipCollider: {fileID: 0}
   lastCheckpoint: {fileID: 1314466857614306}
---- !u!136 &136646781882361144
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091788886346746}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!138 &138975682551736550
 FixedJoint:
   m_ObjectHideFlags: 1
