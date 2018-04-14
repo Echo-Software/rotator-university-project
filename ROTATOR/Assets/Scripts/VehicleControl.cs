@@ -25,19 +25,22 @@ public class VehicleControl : MonoBehaviour {
 	private Rigidbody ship;
 	private BoxCollider shipCollider;
 	private GameManager gm;
+	private PowerupManager pm;
 	private Vector3 localVelocity;
 	private CameraManager camera;
 	[SerializeField]
 	private GameObject lastCheckpoint;
+	private int weaponLevel;
 	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
-	private string playerInput;
-	private bool accelerating, braking, steering, respawning, invincible = false;
+	private string playerInput, currentWeapon;
+	private bool accelerating, braking, steering, respawning, invincible, forcedAcceleration = false;
 	private bool gravityShiftReady = true;
 
 	// Use this for initialization
 	void Start () {
 		// Get the rigidbody & box collider for the attached object, also assign the game manager
 		gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+		pm = GameObject.Find("GameManager").GetComponent<PowerupManager>();
 		ship = GetComponent<Rigidbody>();
 		shipCollider = GetComponent<BoxCollider>();
 
@@ -69,10 +72,12 @@ public class VehicleControl : MonoBehaviour {
 		// Set the ships initial gravity charges based on their max amount
 		shipGravityCharges = maxGravityCharges;
 
-		// Set the initial lap, checkpoint and position variables
+		// Set the initial lap, checkpoint, position and weapon variables
 		lapCount = 1;
 		nextCheckpoint = 1;
 		currentPosition = controllingPlayer;
+		currentWeapon = "NO WEAPON";
+		weaponLevel = 0;
 	}
 
     // Update is called once per frame
@@ -149,6 +154,11 @@ public class VehicleControl : MonoBehaviour {
 				ship.AddRelativeForce ((Vector3.forward * accelerationAxis) * shipAcceleration * 50, ForceMode.Acceleration);
 			}
 		} 
+		else if (forcedAcceleration) {
+			if (localVelocity.z < shipTopSpeed){		
+				ship.AddRelativeForce ((Vector3.forward * 1) * shipAcceleration * 50, ForceMode.Acceleration);
+			}
+		}
 		else {
 			accelerating = false;
 		}
@@ -166,8 +176,8 @@ public class VehicleControl : MonoBehaviour {
 		}
 	}
 
-    void OnTriggerEnter(Collider obj)
-    {
+	// All object collisions for vehicle handled here
+    void OnTriggerEnter(Collider obj){
 		// Collision triggers for gravity charge item
         if (obj.tag == "GravCharge")
         {
@@ -195,6 +205,32 @@ public class VehicleControl : MonoBehaviour {
 				lastCheckpoint = obj.gameObject;
 			}
 		}
+
+		// Collision triggers for powerup/weapon boxes
+		if (obj.gameObject.tag == "Powerup") {
+			currentWeapon = pm.RandomWeapon (currentPosition);
+			weaponLevel = 1;
+			StartCoroutine (pm.RespawnPickup(obj.gameObject));
+		}
+
+		// Collision triggers for levelup boxes
+		if (obj.gameObject.tag == "Levelup") {
+			StartCoroutine (pm.RespawnPickup(obj.gameObject));
+			if (currentWeapon != "ERASER" && currentWeapon != "NO WEAPON"){				
+				if (currentWeapon == "MISSILE" && weaponLevel == 3) {
+					// Replenish missile count here
+				} 
+				else if (weaponLevel < 3) {
+					weaponLevel++;
+				}
+			}
+		}
+
+		// Collision triggers for track speed boosters
+		if (obj.gameObject.tag == "Speedup") {
+			StartCoroutine ("SpeedUp");
+		}
+			
     }
 
 	IEnumerator GravityShift(){
@@ -218,6 +254,16 @@ public class VehicleControl : MonoBehaviour {
 		}
 		else {
 			return Mathf.Round(localVelocity.z * 10).ToString();			
+		}
+	}
+
+	// Method that interface manager uses to get the current weapon
+	public string ReturnWeapon(){
+		if (currentWeapon == "NO WEAPON" || currentWeapon == "ERASER") {
+			return currentWeapon;
+		} 
+		else {
+			return currentWeapon + " LV." + weaponLevel.ToString();
 		}
 	}
 
@@ -285,6 +331,19 @@ public class VehicleControl : MonoBehaviour {
 		// 2 seconds of invincibility so the player can't get repeatedly blown up etc
 		yield return new WaitForSeconds (2f);
 		invincible = false;
+	}
+
+	IEnumerator SpeedUp(){
+		float tempShipSpeed = shipTopSpeed;
+		float tempShipAcceleration = shipAcceleration;
+
+		forcedAcceleration = true;
+		shipTopSpeed = tempShipSpeed * 1.5f;
+		shipAcceleration = tempShipAcceleration * 2f;
+		yield return new WaitForSeconds(1f);
+		forcedAcceleration = false;
+		shipTopSpeed = tempShipSpeed;
+		shipAcceleration = tempShipAcceleration;
 	}
 
 }

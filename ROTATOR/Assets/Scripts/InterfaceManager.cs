@@ -116,6 +116,7 @@ public class InterfaceManager : MonoBehaviour {
 			p1Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnLap ();
 			p1Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
 			p1Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
+			p1Interface [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnWeapon();
 			p1Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 			// Player 2 UI updates
@@ -127,6 +128,7 @@ public class InterfaceManager : MonoBehaviour {
 			p2Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnLap ();
 			p2Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2lap);
 			p2Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2total);
+			p2Interface [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnWeapon();
 			p2Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 		} 
 		else if (gm.numberOfPlayers == 3) {
@@ -139,6 +141,7 @@ public class InterfaceManager : MonoBehaviour {
 			p1Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnLap ();
 			p1Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
 			p1Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
+			p1Interface3Plus [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnWeapon();
 			p1Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 			// Player 2 UI updates
@@ -150,6 +153,7 @@ public class InterfaceManager : MonoBehaviour {
 			p2Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnLap ();
 			p2Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2lap);
 			p2Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2total);
+			p2Interface3Plus [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnWeapon();
 			p2Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 			// Player 3 UI updates
@@ -161,6 +165,7 @@ public class InterfaceManager : MonoBehaviour {
 			p3Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().ReturnLap ();
 			p3Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3lap);
 			p3Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3total);
+			p3Interface [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().ReturnWeapon();
 			p3Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 		} 
@@ -174,6 +179,7 @@ public class InterfaceManager : MonoBehaviour {
 			p1Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnLap ();
 			p1Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1lap);
 			p1Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p1total);
+			p1Interface3Plus [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().ReturnWeapon();
 			p1Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [0].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 			// Player 2 UI updates
@@ -185,6 +191,7 @@ public class InterfaceManager : MonoBehaviour {
 			p2Interface3Plus [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnLap ();
 			p2Interface3Plus [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2lap);
 			p2Interface3Plus [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p2total);
+			p2Interface3Plus [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().ReturnWeapon();
 			p2Interface3Plus [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [1].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 			// Player 3 UI updates
@@ -196,6 +203,7 @@ public class InterfaceManager : MonoBehaviour {
 			p3Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl> ().ReturnLap ();
 			p3Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3lap);
 			p3Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p3total);
+			p3Interface [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().ReturnWeapon();
 			p3Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [2].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 
 			// Player 4 UI updates
@@ -207,6 +215,7 @@ public class InterfaceManager : MonoBehaviour {
 			p4Interface [3].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().ReturnLap ();
 			p4Interface [4].GetComponent<TextMeshProUGUI> ().text = FormatTime (p4lap);
 			p4Interface [5].GetComponent<TextMeshProUGUI> ().text = FormatTime (p4total);
+			p4Interface [6].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().ReturnWeapon();
 			p4Interface [7].GetComponent<TextMeshProUGUI> ().text = gm.playerShipSelection [3].GetComponent<VehicleControl>().shipGravityCharges.ToString();
 		}
 	}
