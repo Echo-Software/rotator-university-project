@@ -10,6 +10,7 @@ public class PowerupManager : MonoBehaviour {
 	// Private Variables
 	private GameManager gm;
 	private string[] weaponTypes = new string[] {"PULSE","MISSILE","SHIELD","MINE","ERASER"};
+	private GameObject target;
 
 	void Start(){
 		gm = gameObject.GetComponent<GameManager> ();
@@ -17,8 +18,9 @@ public class PowerupManager : MonoBehaviour {
 
 	public string RandomWeapon(int currentPosition){
 		// Check if the player is in last position before deciding which weapon they get (only last place can get the Eraser)
-		if (currentPosition == gm.numberOfPlayers) {
-			return weaponTypes [Random.Range (0, 5)];
+		// If the player is in last place, they have a 10% chance to get the eraser, otherwise they get one of the other 4 weapons
+		if (currentPosition == gm.numberOfPlayers && Random.Range (0, 11) == 10) {
+			return weaponTypes [4];
 		} 
 		else {
 			return weaponTypes [Random.Range (0, 4)];
@@ -159,16 +161,28 @@ public class PowerupManager : MonoBehaviour {
 			if (weaponLevel == 1) {
 				// Drop a stun mine
 				Debug.Log("Level 1 (stun) mine dropped");
+				tempPrefab = (GameObject)Instantiate (weaponPrefabs [7], player.transform.position, player.transform.rotation);
+				Physics.IgnoreCollision(tempPrefab.GetComponent<BoxCollider>(), player.GetComponent<VehicleControl>().shipCollider);
+				StartCoroutine (EnableMineCollision(tempPrefab.GetComponent<BoxCollider>(), player.GetComponent<VehicleControl>().shipCollider, 5f));
+				tempPrefab.GetComponent<BoxCollider> ().enabled = true;
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 			if (weaponLevel == 2) {
 				// Drop a holo-mine that effects both sides of the track
 				Debug.Log("Level 2 (holo) mine dropped");
+				tempPrefab = (GameObject)Instantiate (weaponPrefabs [8], player.transform.position, player.transform.rotation);
+				Physics.IgnoreCollision(tempPrefab.GetComponent<BoxCollider>(), player.GetComponent<VehicleControl>().shipCollider);
+				StartCoroutine (EnableMineCollision(tempPrefab.GetComponent<BoxCollider>(), player.GetComponent<VehicleControl>().shipCollider, 5f));
+				tempPrefab.GetComponent<BoxCollider> ().enabled = true;
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 			if (weaponLevel == 3) {
 				// Drop an explosive holo-mine with a larger activation radius
 				Debug.Log("Level 3 (explosive-holo) mine dropped");
+				tempPrefab = (GameObject)Instantiate (weaponPrefabs [9], player.transform.position, player.transform.rotation);
+				Physics.IgnoreCollision(tempPrefab.GetComponent<BoxCollider>(), player.GetComponent<VehicleControl>().shipCollider);
+				StartCoroutine (EnableMineCollision(tempPrefab.GetComponent<BoxCollider>(), player.GetComponent<VehicleControl>().shipCollider, 5f));
+				tempPrefab.GetComponent<BoxCollider> ().enabled = true;
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 		} 
@@ -177,7 +191,28 @@ public class PowerupManager : MonoBehaviour {
 		if (weaponName == "ERASER") {
 			// Fire the Eraser orbital strike cannon at the first place player
 			Debug.Log("Eraser orbital strike cannon activated!");
-			player.GetComponent<VehicleControl> ().ResetWeapon ();
+
+			// Find the target for the eraser using a loop
+			for (int count = 0; count < gm.numberOfPlayers; count++) {
+				if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 1) {
+					target = gm.playerShipSelection [count];
+				}
+			}
+
+			// If you are in first when you try and use the eraser, do nothing (give a debug error)
+			if (target == player) {
+				Debug.Log ("Cannot orbital strike yourself!");
+				player.GetComponent<VehicleControl> ().ResetWeapon ();
+			} 
+			// If someone else is in first, fire the eraser and reset the weapon
+			else {
+				tempPrefab = (GameObject)Instantiate (weaponPrefabs [10], target.transform.position, Quaternion.Euler(180f, target.transform.rotation.y, target.transform.rotation.z));
+				tempPrefab.transform.parent = target.transform;
+				tempPrefab.transform.Translate (1, -4, 0, Space.Self);
+				Destroy (tempPrefab, 5.0f);
+				player.GetComponent<VehicleControl> ().ResetWeapon ();
+			}
+
 		}
 	}
 
@@ -207,6 +242,11 @@ public class PowerupManager : MonoBehaviour {
 				complete = true;
 			}
 		}
+	}
+
+	IEnumerator EnableMineCollision(Collider col1, Collider col2, float time){
+		yield return new WaitForSeconds (time);
+		Physics.IgnoreCollision(col1, col2, false);		
 	}
 
 }
