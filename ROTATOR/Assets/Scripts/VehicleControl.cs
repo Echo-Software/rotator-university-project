@@ -18,7 +18,7 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
-	public bool invincible = false;
+	public bool invincible, respawning = false;
 	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount, missileCount;
 	public GameObject cameraHook, cameraFocus;
 	public BoxCollider shipCollider;
@@ -34,7 +34,7 @@ public class VehicleControl : MonoBehaviour {
 	private int weaponLevel;
 	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
 	private string playerInput, currentWeapon;
-	private bool accelerating, braking, steering, respawning, forcedAcceleration, stunned = false;
+	private bool accelerating, braking, steering, forcedAcceleration, stunned = false;
 	private bool gravityShiftReady = true;
 
 	// Use this for initialization
@@ -86,7 +86,7 @@ public class VehicleControl : MonoBehaviour {
     {
         // This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
         // Button to shift to other side of track. 
-        if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady)
+		if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady && !respawning)
         {
             if (shipGravityCharges >= 1)
             {
@@ -249,31 +249,37 @@ public class VehicleControl : MonoBehaviour {
 		}
 
 		// Collision triggers for weapons
-		if (obj.gameObject.tag == "Weapon" && !invincible && !respawning && grounded) {			
-			// Pulse level 1 stun
-			if (obj.gameObject.name == "Pulse LV1 Prefab(Clone)") {
-				StartCoroutine ("Stun");
-			} 
-			// Level 1 and 2 mines are handled differently as they must be destroyed after impact
-			else if (obj.gameObject.name == "Mine LV1 Prefab(Clone)" || obj.gameObject.name == "Mine LV2 Prefab(Clone)") {
-				StartCoroutine ("Stun");
-				Destroy (obj.gameObject);
-			}
-			// Shield level 2 has a pushback effect, but shouldn't stun or destroy anything
-			else if (obj.gameObject.name == "Shield LV2 Prefab(Clone)") {
-				Vector3 oppositeForce = (this.transform.position - obj.transform.position).normalized;
-				ship.AddForce (oppositeForce * 17.5f, ForceMode.VelocityChange);
-			}
-			// All other weapon collisions result in a ship explosion
-			else {				
-				// replace with some sort of "destroy ship" method eventually
-				RespawnShip ();
-
-				// After the ship is destroyed, also check if it was a level 3 mine and destroy it
-				if (obj.gameObject.name == "Mine LV3 Prefab(Clone)") {
+		if (obj.gameObject.tag == "Weapon") {
+			if (!invincible && !respawning && grounded){
+				// Pulse level 1 stun
+				if (obj.gameObject.name == "Pulse LV1 Prefab(Clone)") {
+					StartCoroutine ("Stun");
+				} 
+				// Level 1 and 2 mines are handled differently as they must be destroyed after impact
+				else if (obj.gameObject.name == "Mine LV1 Prefab(Clone)" || obj.gameObject.name == "Mine LV2 Prefab(Clone)") {
+					StartCoroutine ("Stun");
 					Destroy (obj.gameObject);
 				}
+				// Shield level 2 has a pushback effect, but shouldn't stun or destroy anything
+				else if (obj.gameObject.name == "Shield LV2 Prefab(Clone)") {
+					Vector3 oppositeForce = (this.transform.position - obj.transform.position).normalized;
+					ship.AddForce (oppositeForce * 17.5f, ForceMode.VelocityChange);
+				}
+				// All other weapon collisions result in a ship explosion
+				else {				
+					// replace with some sort of "destroy ship" method eventually
+					RespawnShip ();
+
+					// After the ship is destroyed, also check if it was a level 3 mine and destroy it
+					if (obj.gameObject.name == "Mine LV3 Prefab(Clone)") {
+						Destroy (obj.gameObject);
+					}
+				}
 			}
+		} 
+		else if (obj.gameObject.tag == "Eraser") {
+			// replace with some sort of "destroy ship" method eventually
+			RespawnShip ();
 		}
 			
     }
@@ -373,6 +379,8 @@ public class VehicleControl : MonoBehaviour {
 		// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
 		// they passed, making sure to translate them 3 units away from the track so they don't clip
 		yield return new WaitForSeconds (2f);
+		camera.CameraWhiteFlash ();
+		yield return new WaitForSeconds (0.25f);
 		gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y, respawn.transform.position.z);
 		transform.Translate (new Vector3 (0, 3, 0), Space.Self);
 

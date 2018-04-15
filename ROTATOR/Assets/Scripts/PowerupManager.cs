@@ -19,7 +19,7 @@ public class PowerupManager : MonoBehaviour {
 	public string RandomWeapon(int currentPosition){
 		// Check if the player is in last position before deciding which weapon they get (only last place can get the Eraser)
 		// If the player is in last place, they have a 10% chance to get the eraser, otherwise they get one of the other 4 weapons
-		if (currentPosition == gm.numberOfPlayers && Random.Range (0, 11) == 10) {
+		if (currentPosition == gm.numberOfPlayers /*&& Random.Range (0, 11) == 10*/) {
 			return weaponTypes [4];
 		} 
 		else {
@@ -204,11 +204,15 @@ public class PowerupManager : MonoBehaviour {
 				Debug.Log ("Cannot orbital strike yourself!");
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			} 
+			else if (target.GetComponent<VehicleControl>().grounded == false || target.GetComponent<VehicleControl>().respawning == true){
+				Debug.Log ("Unable to aquire target");
+				player.GetComponent<VehicleControl> ().ResetWeapon ();
+			}
 			// If someone else is in first, fire the eraser and reset the weapon
 			else {
-				tempPrefab = (GameObject)Instantiate (weaponPrefabs [10], target.transform.position, Quaternion.Euler(180f, target.transform.rotation.y, target.transform.rotation.z));
-				tempPrefab.transform.parent = target.transform;
-				tempPrefab.transform.Translate (1, -4, 0, Space.Self);
+				tempPrefab = (GameObject)Instantiate (weaponPrefabs [10], target.transform.position, Quaternion.Euler(-target.transform.rotation.x, target.transform.rotation.y, target.transform.rotation.z));
+				transform.Translate (0, -2.5f, 0, Space.Self);
+				tempPrefab.GetComponent<EraserControl> ().ObtainTarget (target);
 				Destroy (tempPrefab, 5.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
