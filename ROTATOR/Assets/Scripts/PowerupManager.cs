@@ -19,7 +19,7 @@ public class PowerupManager : MonoBehaviour {
 	public string RandomWeapon(int currentPosition){
 		// Check if the player is in last position before deciding which weapon they get (only last place can get the Eraser)
 		// If the player is in last place, they have a 10% chance to get the eraser, otherwise they get one of the other 4 weapons
-		if (currentPosition == gm.numberOfPlayers /*&& Random.Range (0, 11) == 10*/) {
+		if (currentPosition == gm.numberOfPlayers && Random.Range (0, 11) == 10) {
 			return weaponTypes [4];
 		} 
 		else {
