@@ -245,7 +245,7 @@ public class VehicleControl : MonoBehaviour {
 
 		// Collision triggers for track speed boosters
 		if (obj.gameObject.tag == "Speedup") {
-			StartCoroutine ("SpeedUp");
+			StartCoroutine (SpeedUp(3f));
 		}
 
 		// Collision triggers for weapons
@@ -410,14 +410,14 @@ public class VehicleControl : MonoBehaviour {
 		invincible = false;
 	}
 
-	IEnumerator SpeedUp(){
+	IEnumerator SpeedUp(float time){
 		float tempShipSpeed = shipTopSpeed;
 		float tempShipAcceleration = shipAcceleration;
 
 		forcedAcceleration = true;
 		shipTopSpeed = tempShipSpeed * 1.5f;
 		shipAcceleration = tempShipAcceleration * 2f;
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(time);
 		forcedAcceleration = false;
 		shipTopSpeed = tempShipSpeed;
 		shipAcceleration = tempShipAcceleration;
