@@ -751,6 +751,7 @@ MonoBehaviour:
   maxGravityCharges: 3
   gravityShiftCooldown: 2.5
   invincible: 0
+  respawning: 0
   shipGravityCharges: 0
   controllingPlayer: 1
   currentPosition: 0
