@@ -122,9 +122,9 @@ public class VehicleControl : MonoBehaviour {
 		}
 
 		// If the player is no longer grounded, respawn them at the last checkpoint as they must be off the track at this point
-		if (!grounded){
+		/*if (!grounded){
 			RespawnShip ();
-		}
+		}*/
 
 	}
 

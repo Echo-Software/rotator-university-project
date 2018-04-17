@@ -28,11 +28,8 @@ public class VehicleGravity : MonoBehaviour {
 			GravityCheck (hit);
 		} 
 		else {
-			// Here we can call for code to destroy/respawn ship as the raycast has missed an object (ship is OOB at this point),
-			// we will also need to reset the ship "grounded" status on respawn (vc.grounded = true).
+			// Here we can call for code to destroy/respawn ship as the raycast has missed an object (ship is OOB at this point)
 			print ("Raycast missed");
-			// Tell the vehicle control script that the ship no longer hitting a track object
-			vc.grounded = false;
 		}
 	}
 

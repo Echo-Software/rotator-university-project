@@ -28,10 +28,6 @@ public class MissileGravity : MonoBehaviour {
 		if (Physics.Raycast (ray, out hit)) {
 			GravityCheck (hit);
 		} 
-		else {			
-			print ("Raycast missed");
-			Destroy (this);
-		}
 
 		if (gameObject.name == "Missile LV1 Prefab(Clone)") {
 			missile.AddRelativeForce (Vector3.forward * 100 - missile.velocity);

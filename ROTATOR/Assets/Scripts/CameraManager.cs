@@ -11,7 +11,7 @@ public class CameraManager : MonoBehaviour {
 
 	// Private variables
 	private GameManager gm;
-	private float smoothSpeed = 5f;
+	private float smoothSpeed = 10f;
 	private Quaternion fixedRotation;
 	private Renderer fillSprite;
 	private Color tempColor;
