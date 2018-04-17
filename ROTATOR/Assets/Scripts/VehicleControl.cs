@@ -18,7 +18,7 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
-	public bool invincible, respawning = false;
+	public bool invincible, respawning, offTrack = false;
 	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount, missileCount;
 	public GameObject cameraHook, cameraFocus;
 	public BoxCollider shipCollider;
@@ -122,9 +122,11 @@ public class VehicleControl : MonoBehaviour {
 		}
 
 		// If the player is no longer grounded, respawn them at the last checkpoint as they must be off the track at this point
-		/*if (!grounded){
-			RespawnShip ();
-		}*/
+		if (!grounded && !offTrack) {
+			StartCoroutine(OfftrackTimedRespawn(lastCheckpoint));
+			offTrack = true;
+		}
+		
 
 	}
 
@@ -371,6 +373,37 @@ public class VehicleControl : MonoBehaviour {
 		}
 	}
 
+	IEnumerator OfftrackTimedRespawn(GameObject respawn){
+		// Sets the player invicible and respawning states to true 
+		invincible = true;
+		respawning = true;
+
+		if (respawning) {
+			Debug.Log ("Respawning...");
+			// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
+			// they passed, making sure to translate them 3 units away from the track so they don't clip
+			yield return new WaitForSeconds (2f);
+			camera.CameraWhiteFlash ();
+			Debug.Log ("Respawning Again...");
+			ship.angularVelocity = Vector3.zero;
+			ship.velocity = Vector3.zero;
+			gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y + 3, respawn.transform.position.z);
+
+			// When matching the rotation angles, don't match the z rotation as the ship needs to retain it's flipped/unflipped state
+			gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, respawn.transform.eulerAngles.z);
+			// transform.Translate (new Vector3 (0, 3, 0), Space.Self);
+
+			// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
+			camera.ResetCameraPosition ();			
+		}
+
+		respawning = false;
+
+		// 2 seconds of invincibility so the player can't get repeatedly blown up etc
+		yield return new WaitForSeconds (2f);
+		invincible = false;
+	}
+
 	IEnumerator TimedRespawn(GameObject respawn){
 		// Sets the player invicible and respawning states to true 
 		invincible = true;
@@ -380,16 +413,18 @@ public class VehicleControl : MonoBehaviour {
 		// they passed, making sure to translate them 3 units away from the track so they don't clip
 		yield return new WaitForSeconds (2f);
 		camera.CameraWhiteFlash ();
+
 		yield return new WaitForSeconds (0.25f);
 		gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y, respawn.transform.position.z);
-		transform.Translate (new Vector3 (0, 3, 0), Space.Self);
+
 
 		// When matching the rotation angles, don't match the z rotation as the ship needs to retain it's flipped/unflipped state
-		gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, gameObject.transform.eulerAngles.z);
+		gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, respawn.transform.eulerAngles.z);
+		transform.Translate (new Vector3 (0, 3, 0), Space.Self);
 
 		// Set the velocity of the ship to zero again, to make sure the ship doesn't drift after respawning
 		ship.angularVelocity = Vector3.zero;
-		ship.velocity = Vector3.zero;
+		ship.velocity = Vector3.zero;	
 
 		// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
 		camera.ResetCameraPosition ();

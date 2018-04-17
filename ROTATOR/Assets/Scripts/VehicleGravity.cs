@@ -26,10 +26,14 @@ public class VehicleGravity : MonoBehaviour {
 		ray = new Ray (transform.position, -transform.up);
 		if (Physics.Raycast (ray, out hit)) {
 			GravityCheck (hit);
+			if (vc.offTrack) {
+				vc.offTrack = false;
+			}
 		} 
 		else {
 			// Here we can call for code to destroy/respawn ship as the raycast has missed an object (ship is OOB at this point)
-			print ("Raycast missed");
+			vc.grounded = false;
+			// print ("Raycast missed");
 		}
 	}
 
