@@ -30,7 +30,7 @@ public class MissileGravity : MonoBehaviour {
 		} 
 
 		if (gameObject.name == "Missile LV1 Prefab(Clone)") {
-			missile.AddRelativeForce (Vector3.forward * 100 - missile.velocity);
+			missile.AddRelativeForce (Vector3.forward * 100 - missile.velocity, ForceMode.VelocityChange);
 		} else {		
 
 			if (vc.currentPosition == 1) {

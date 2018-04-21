@@ -32,9 +32,9 @@ public class VehicleControl : MonoBehaviour {
 	[SerializeField]
 	private GameObject lastCheckpoint;
 	private int weaponLevel;
-	private float turnAxis, turningLimit, accelerationAxis, brakingAxis;
+	private float turnAxis, turningLimit, accelerationAxis, brakingAxis, catchupSpeed, topSpeed, topAcceleration;
 	private string playerInput, currentWeapon;
-	private bool accelerating, braking, steering, forcedAcceleration, stunned = false;
+	private bool accelerating, braking, steering, forcedAcceleration, stunned, flipped = false;
 	private bool gravityShiftReady = true;
 
 	// Use this for initialization
@@ -79,51 +79,70 @@ public class VehicleControl : MonoBehaviour {
 		currentPosition = controllingPlayer;
 		currentWeapon = "NO WEAPON";
 		weaponLevel = 0;
+		topSpeed = shipTopSpeed;
+		topAcceleration = shipAcceleration;
 	}
 
     // Update is called once per frame
     void Update()
     {
-        // This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
-        // Button to shift to other side of track. 
-		if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady && !respawning)
-        {
-            if (shipGravityCharges >= 1)
-            {
-				camera.CameraWhiteFlash ();
-				StartCoroutine("GravityShift");                
-            }
-            else
-            {
-                shipCollider.isTrigger = true;
-                shipCollider.isTrigger = false;
-            }
-        }
+		// Only allow these controls on the ship to be used if the race has started
+		if (gm.raceStarted) {
+			// This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
+			// Button to shift to other side of track. 
+			if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady && !respawning)
+			{
+				if (shipGravityCharges >= 1)
+				{
+					camera.CameraWhiteFlash ();
+					StartCoroutine("GravityShift");                
+				}
+				else
+				{
+					shipCollider.isTrigger = true;
+					shipCollider.isTrigger = false;
+				}
+			}
 
-		// Button to respawn (self-destruct) ship
-		if (Input.GetButtonDown(playerInput + "Back_Button") && !invincible)
-		{
-			RespawnShip ();
-		}
+			// Button to respawn (self-destruct) ship
+			if (Input.GetButtonDown(playerInput + "Back_Button") && !invincible)
+			{
+				RespawnShip ();
+			}
 
-		// Button to fire current weapon
-		if (Input.GetButtonDown(playerInput + "A_Button") && grounded && !respawning)
-		{
-			if (currentWeapon != "NO WEAPON") {
-				pm.FireWeapon (gameObject, currentWeapon, weaponLevel);
+			// Button to fire current weapon
+			if (Input.GetButtonDown(playerInput + "A_Button") && grounded && !respawning)
+			{
+				if (currentWeapon != "NO WEAPON") {
+					pm.FireWeapon (gameObject, currentWeapon, weaponLevel);
+				}
+			}
+
+			// Apply proper catch up speed based on position and number of players present
+			if (currentPosition == 4) {
+				catchupSpeed = 1.15f;
+			}
+			else if (currentPosition == 3) {
+				catchupSpeed = 1.10f;
+			}
+			else if (currentPosition == 2) {
+				catchupSpeed = 1.05f;
+			}
+			else if (currentPosition == 1) {
+				catchupSpeed = 1f;
 			}
 		}
     }
 
 	void FixedUpdate() {
-		// Only allow the player to control the ship if they are grounded (track is underneath them) and not respawning or stunned
+		// Only allow the player to control the ship once the race has started, they are grounded and not respawning or stunned
 		if (grounded && !respawning && !stunned && gm.raceStarted) {
 			ShipHandling ();
 		}
 
 		// If the player is no longer grounded, respawn them at the last checkpoint as they must be off the track at this point
-		if (!grounded && !offTrack) {
-			StartCoroutine(OfftrackTimedRespawn(lastCheckpoint));
+		if (!grounded && !offTrack && !respawning) {
+			StartCoroutine(TimedRespawn(lastCheckpoint));
 			offTrack = true;
 		}
 		
@@ -166,8 +185,8 @@ public class VehicleControl : MonoBehaviour {
 		if (accelerationAxis != 0) {
 			accelerating = true;			
 
-			if (localVelocity.z < shipTopSpeed){		
-				ship.AddRelativeForce ((Vector3.forward * accelerationAxis) * shipAcceleration * 50, ForceMode.Acceleration);
+			if (localVelocity.z < shipTopSpeed * catchupSpeed){		
+				ship.AddRelativeForce ((Vector3.forward * accelerationAxis) * (shipAcceleration * catchupSpeed) * 50, ForceMode.Acceleration);
 			}
 		} 
 		else if (forcedAcceleration) {
@@ -208,12 +227,12 @@ public class VehicleControl : MonoBehaviour {
         }
 
 		// Collision triggers for lap checkpoint
-		if (obj.gameObject.tag == "Checkpoint") {
+		if (obj.gameObject.tag == "Checkpoint" && !respawning) {
 			if (obj.gameObject.name == "Checkpoint " + nextCheckpoint) {
 				nextCheckpoint++;
 				lastCheckpoint = obj.gameObject;
 			} 
-			else if (nextCheckpoint > gm.checkpoints.Length - 1 && obj.gameObject.name == "Finish Line") {
+			else if (nextCheckpoint > gm.checkpoints.Length - 5 && obj.gameObject.name == "Finish Line") {
 				gm.NewLap (controllingPlayer, lapCount);
 				lapCount++;
 				nextCheckpoint = 1;
@@ -283,10 +302,17 @@ public class VehicleControl : MonoBehaviour {
 			// replace with some sort of "destroy ship" method eventually
 			RespawnShip ();
 		}
-			
     }
 
 	IEnumerator GravityShift(){
+		// Dertermine if the ship has "flipped" or not to help with checkpoint respawning later
+		if (flipped) {
+			flipped = false;
+		} 
+		else {
+			flipped = true;
+		}
+
 		gravityShiftReady = false;
 		yield return new WaitForSeconds (0.25f);
 		shipCollider.isTrigger = true;
@@ -303,9 +329,10 @@ public class VehicleControl : MonoBehaviour {
 			if (localVelocity.z < 0.01) {
 				return "0";
 			} 
-			if (localVelocity.z > shipTopSpeed - 1) {
-				return Mathf.Round (shipTopSpeed * 10).ToString ();
-			} else {
+			if (localVelocity.z > (shipTopSpeed * catchupSpeed) - 1) {
+				return Mathf.Round ((shipTopSpeed * catchupSpeed) * 10).ToString ();
+			}
+			else {
 				return Mathf.Round (localVelocity.z * 10).ToString ();			
 			}
 		} 
@@ -365,7 +392,7 @@ public class VehicleControl : MonoBehaviour {
 		if (lastCheckpoint.name == "Camera Hook") {
 			Debug.Log ("No passed checkpoint to respawn at");
 		} 
-		else {
+		else if (gm.raceStarted) {
 			// Stop the players velocity after they start the respawning process
 			ship.angularVelocity = Vector3.zero;
 			ship.velocity = Vector3.zero;
@@ -373,61 +400,39 @@ public class VehicleControl : MonoBehaviour {
 		}
 	}
 
-	IEnumerator OfftrackTimedRespawn(GameObject respawn){
-		// Sets the player invicible and respawning states to true 
-		invincible = true;
-		respawning = true;
-
-		if (respawning && gm.raceStarted) {
-			Debug.Log ("Respawning...");
-			// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
-			// they passed, making sure to translate them 3 units away from the track so they don't clip
-			yield return new WaitForSeconds (2f);
-			camera.CameraWhiteFlash ();
-			Debug.Log ("Respawning Again...");
-			ship.angularVelocity = Vector3.zero;
-			ship.velocity = Vector3.zero;
-			gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y + 3, respawn.transform.position.z);
-
-			// When matching the rotation angles, don't match the z rotation as the ship needs to retain it's flipped/unflipped state
-			gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, respawn.transform.eulerAngles.z);
-			// transform.Translate (new Vector3 (0, 3, 0), Space.Self);
-
-			// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
-			camera.ResetCameraPosition ();			
-		}
-
-		respawning = false;
-
-		// 2 seconds of invincibility so the player can't get repeatedly blown up etc
-		yield return new WaitForSeconds (2f);
-		invincible = false;
-	}
-
 	IEnumerator TimedRespawn(GameObject respawn){
 		// Sets the player invicible and respawning states to true 
 		invincible = true;
 		respawning = true;
 
-		// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
-		// they passed, making sure to translate them 3 units away from the track so they don't clip
-		yield return new WaitForSeconds (2f);
-		camera.CameraWhiteFlash ();
+		if (respawning && gm.raceStarted) {
+			// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
+			// they passed, making sure to translate them 3 units away from the track so they don't clip
+			yield return new WaitForSeconds (2f);
+			camera.CameraWhiteFlash ();
 
-		yield return new WaitForSeconds (0.25f);
-		gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y, respawn.transform.position.z);
+			yield return new WaitForSeconds (0.25f);
+			gameObject.transform.position = new Vector3 (respawn.transform.position.x, respawn.transform.position.y, respawn.transform.position.z);
 
 
-		// When matching the rotation angles, don't match the z rotation as the ship needs to retain it's flipped/unflipped state
-		gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, respawn.transform.eulerAngles.z);
-		transform.Translate (new Vector3 (0, 3, 0), Space.Self);
+			// Match the rotation of the checkpoint, account for the ship's flipped/unflipped state
+			if (flipped) {
+				gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, respawn.transform.eulerAngles.z);
+				transform.Translate (new Vector3 (-((2.5f - controllingPlayer) * 2.5f), -3, 0), Space.Self);
+				transform.Rotate (0, 0, 180);
+			} 
+			else {
+				gameObject.transform.eulerAngles = new Vector3 (respawn.transform.eulerAngles.x, respawn.transform.eulerAngles.y, respawn.transform.eulerAngles.z);
+				transform.Translate (new Vector3 (-((2.5f - controllingPlayer) * 2.5f), 3, 0), Space.Self);
+			}
 
-		// Set the velocity of the ship to zero again, to make sure the ship doesn't drift after respawning
-		ship.angularVelocity = Vector3.zero;
-		ship.velocity = Vector3.zero;	
+			// Set the velocity of the ship to zero again, to make sure the ship doesn't drift after respawning
+			ship.angularVelocity = Vector3.zero;
+			ship.velocity = Vector3.zero;	
 
-		// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
-		camera.ResetCameraPosition ();
+			// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
+			camera.ResetCameraPosition ();
+		}
 		respawning = false;
 
 		// 2 seconds of invincibility so the player can't get repeatedly blown up etc
@@ -446,22 +451,24 @@ public class VehicleControl : MonoBehaviour {
 	}
 
 	IEnumerator SpeedUp(float time){
-		float tempShipSpeed = shipTopSpeed;
-		float tempShipAcceleration = shipAcceleration;
-
 		forcedAcceleration = true;
-		shipTopSpeed = tempShipSpeed * 1.5f;
-		shipAcceleration = tempShipAcceleration * 2f;
+		shipTopSpeed = topSpeed * 1.5f;
+		shipAcceleration = topAcceleration * 2f;
 		yield return new WaitForSeconds(time);
 		forcedAcceleration = false;
-		shipTopSpeed = tempShipSpeed;
-		shipAcceleration = tempShipAcceleration;
+		shipTopSpeed = topSpeed;
+		shipAcceleration = topAcceleration;
 	}
 
 	public IEnumerator ActivateShield(float length){
 		invincible = true;
 		yield return new WaitForSeconds (length);
 		invincible = false;		
+	}
+
+	public void ResetShip(){
+		respawning = false;
+		invincible = false;
 	}
 
 }

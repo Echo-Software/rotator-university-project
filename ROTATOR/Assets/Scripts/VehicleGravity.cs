@@ -62,6 +62,9 @@ public class VehicleGravity : MonoBehaviour {
 				ship.AddForce (transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
 			}
 		} 
+		else if (hit.transform.tag == "Player") {
+			vc.grounded = false;
+		}
 	}
 
 	// Collision detection with track object. Currently being used for debug purposes, but could be used for other things

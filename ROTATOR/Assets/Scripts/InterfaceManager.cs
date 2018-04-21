@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class InterfaceManager : MonoBehaviour {
@@ -9,6 +10,7 @@ public class InterfaceManager : MonoBehaviour {
 	// Public Variables
 	public Camera[] cameras;
 	public Image logo;
+	public GameObject pauseMenu;
 
 	[Header("Player 1 UI Elements (2 split)")]
 	public GameObject[] p1Interface;
@@ -35,6 +37,7 @@ public class InterfaceManager : MonoBehaviour {
 	private GameManager gm;
 	private int playerNumCheck;
 	private float p1lap, p2lap, p3lap, p4lap, p1total, p2total, p3total, p4total;
+	private bool paused = false;
 
 	// Use this for initialization
 	void Start () {
@@ -45,6 +48,7 @@ public class InterfaceManager : MonoBehaviour {
 
 	void Update(){
 		InterfaceUpdate ();
+		PauseCheck ();
 	}
 
 	void CameraPositioning(){
@@ -64,9 +68,10 @@ public class InterfaceManager : MonoBehaviour {
 				cameras [count].gameObject.SetActive (false);
 			}
 
-			// Set the required cameras rects to match the number of players
+			// Set the required cameras rects to match the number of players and set the correct viewport divider
 			cameras[0].rect = new Rect(new Vector2(0,0), new Vector2(0.499f,1));
 			cameras[1].rect = new Rect(new Vector2(0.501f,0), new Vector2(0.499f,1));
+			otherUI [1].gameObject.SetActive(true);
 		}
 		else if (playerNumCheck == 3){
 			// Set player 4 camera to inactive
@@ -77,15 +82,17 @@ public class InterfaceManager : MonoBehaviour {
 			cameras[1].rect = new Rect(new Vector2(0.501f,0.502f), new Vector2(0.499f,0.498f));
 			cameras[2].rect = new Rect(new Vector2(0,0), new Vector2(0.499f,0.498f));
 
-			// Set the logo to true to fill in the empty space for player 4
+			// Set the logo to true to fill in the empty space for player 4 and set the correct viewport divider
 			logo.gameObject.SetActive (true);
+			otherUI [2].gameObject.SetActive(true);
 		}
 		else if (playerNumCheck == 4){
-			// Set the required cameras rects to match the number of players
+			// Set the required cameras rects to match the number of players and set the correct viewport divider
 			cameras[0].rect = new Rect(new Vector2(0,0.502f), new Vector2(0.499f,0.498f));
 			cameras[1].rect = new Rect(new Vector2(0.501f,0.502f), new Vector2(0.499f,0.498f));
 			cameras[2].rect = new Rect(new Vector2(0,0), new Vector2(0.499f,0.498f));
 			cameras[3].rect = new Rect(new Vector2(0.501f,0), new Vector2(0.499f,0.498f));
+			otherUI [2].gameObject.SetActive(true);
 		}
 	}
 
@@ -237,6 +244,12 @@ public class InterfaceManager : MonoBehaviour {
 		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "2";
 		yield return new WaitForSeconds (1f);
 		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "1";
+
+		// Code to solve a bug with ships setting to respawn at startup
+		for (int count = 0; count < gm.numberOfPlayers; count++) {
+			gm.playerShipSelection [count].GetComponent<VehicleControl> ().ResetShip ();
+		}
+
 		yield return new WaitForSeconds (1f);
 		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "GO";
 		gm.raceStarted = true;
@@ -251,6 +264,33 @@ public class InterfaceManager : MonoBehaviour {
 		otherUI [0].SetActive (true);
 		yield return new WaitForSeconds (0.25f);
 		otherUI [0].SetActive (false);
+	}
+
+	private void PauseCheck() {	
+		if (Input.GetButtonDown ("Player1_Start_Button") || Input.GetButtonDown ("Player2_Start_Button") || Input.GetButtonDown ("Player3_Start_Button") || Input.GetButtonDown ("Player4_Start_Button")) {
+			if (!paused) {
+				PauseGame ();
+			} 
+			else {
+				UnpauseGame ();
+			}
+		}
+	}
+
+	public void PauseGame(){
+		Time.timeScale = 0;
+		paused = true;
+		pauseMenu.gameObject.SetActive (true);	
+	}
+
+	public void UnpauseGame(){
+		Time.timeScale = 1;
+		paused = false;
+		pauseMenu.gameObject.SetActive (false);
+	}
+
+	public void ExitRace(){
+		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
 	}
 
 }
