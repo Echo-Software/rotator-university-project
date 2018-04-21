@@ -48,3 +48,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Elevated UI
+    uniqueID: 1061119861
+    locked: 0

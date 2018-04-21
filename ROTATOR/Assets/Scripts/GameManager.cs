@@ -9,8 +9,10 @@ public class GameManager : MonoBehaviour {
 	public GameObject[] checkpoints;
 	public Transform[] startingGrid = new Transform[4];
 	public int numberOfPlayers = 4;
+	public bool raceStarted = false;
 
 	// Private variables
+	private InterfaceManager im;
 	private float[] lapTimers = new float[4];
 	private float[] totalTimers = new float[4];
 	[SerializeField]
@@ -19,6 +21,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
+		im = GameObject.Find ("InterfaceManager").GetComponent<InterfaceManager> ();
 		player1Laps = new float[3];
 		player2Laps = new float[3];
 		player3Laps = new float[3];
@@ -40,6 +43,8 @@ public class GameManager : MonoBehaviour {
 			playerShipSelection [count].transform.position = startingGrid [count].position;
 		}
 
+		// Start the countdown for the start of the race
+		StartRace();
 	}
 	
 	// Update is called once per frame
@@ -146,6 +151,10 @@ public class GameManager : MonoBehaviour {
 			}
 			lapTimers [player - 1] = 0;
 		}
+	}
+
+	private void StartRace(){
+		StartCoroutine (im.Countdown ());
 	}
 
 }

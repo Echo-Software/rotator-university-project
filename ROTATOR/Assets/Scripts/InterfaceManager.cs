@@ -28,6 +28,9 @@ public class InterfaceManager : MonoBehaviour {
 	[Header("Player 4 UI Elements")]
 	public GameObject[] p4Interface;
 
+	[Header("Other UI Elements")]
+	public GameObject[] otherUI;
+
 	// Private Variables
 	private GameManager gm;
 	private int playerNumCheck;
@@ -38,7 +41,6 @@ public class InterfaceManager : MonoBehaviour {
 		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
 		playerNumCheck = gm.numberOfPlayers;
 		CameraPositioning ();
-		InterfaceInitialization ();
 	}
 
 	void Update(){
@@ -226,6 +228,29 @@ public class InterfaceManager : MonoBehaviour {
 		int milliseconds = Mathf.FloorToInt ((timer * 100) % 100);
 
 		return minutes.ToString("00") + ":" + seconds.ToString("00") + "." + milliseconds.ToString("00");
+	}
+
+	public IEnumerator Countdown(){
+		otherUI [0].SetActive (true);
+		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "3";
+		yield return new WaitForSeconds (1f);
+		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "2";
+		yield return new WaitForSeconds (1f);
+		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "1";
+		yield return new WaitForSeconds (1f);
+		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "GO";
+		gm.raceStarted = true;
+		InterfaceInitialization ();
+		yield return new WaitForSeconds (0.25f);
+		otherUI [0].SetActive (false);
+		yield return new WaitForSeconds (0.25f);
+		otherUI [0].SetActive (true);
+		yield return new WaitForSeconds (0.25f);
+		otherUI [0].SetActive (false);
+		yield return new WaitForSeconds (0.25f);
+		otherUI [0].SetActive (true);
+		yield return new WaitForSeconds (0.25f);
+		otherUI [0].SetActive (false);
 	}
 
 }

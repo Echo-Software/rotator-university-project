@@ -18,7 +18,7 @@ public class VehicleControl : MonoBehaviour {
 	public int maxGravityCharges;
 	[Range(2,4)]
 	public float gravityShiftCooldown;
-	public bool invincible, respawning, offTrack = false;
+	public bool invincible, offTrack, respawning = false;
 	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount, missileCount;
 	public GameObject cameraHook, cameraFocus;
 	public BoxCollider shipCollider;
@@ -117,7 +117,7 @@ public class VehicleControl : MonoBehaviour {
 
 	void FixedUpdate() {
 		// Only allow the player to control the ship if they are grounded (track is underneath them) and not respawning or stunned
-		if (grounded && !respawning && !stunned) {
+		if (grounded && !respawning && !stunned && gm.raceStarted) {
 			ShipHandling ();
 		}
 
@@ -378,7 +378,7 @@ public class VehicleControl : MonoBehaviour {
 		invincible = true;
 		respawning = true;
 
-		if (respawning) {
+		if (respawning && gm.raceStarted) {
 			Debug.Log ("Respawning...");
 			// Wait for 2 seconds and then reset the player position & rotation to the last checkpoint 
 			// they passed, making sure to translate them 3 units away from the track so they don't clip
