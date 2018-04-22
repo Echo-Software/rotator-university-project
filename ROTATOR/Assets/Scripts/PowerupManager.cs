@@ -47,8 +47,8 @@ public class PowerupManager : MonoBehaviour {
 				Physics.IgnoreCollision(tempPrefab.GetComponent<SphereCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<SphereCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				StartCoroutine(SpherePulseRadius(player, 0.75f));
-				Destroy (tempPrefab, 2.0f);
+				StartCoroutine(SpherePulseRadius(player, tempPrefab, 2.5f));
+				Destroy (tempPrefab, 4.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 			if (weaponLevel == 2) {
@@ -58,8 +58,8 @@ public class PowerupManager : MonoBehaviour {
 				Physics.IgnoreCollision(tempPrefab.GetComponent<SphereCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<SphereCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				StartCoroutine(SpherePulseRadius(player, 0.90f));
-				Destroy (tempPrefab, 2.0f);
+				StartCoroutine(SpherePulseRadius(player, tempPrefab, 2.5f));
+				Destroy (tempPrefab, 4.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 			if (weaponLevel == 3) {
@@ -69,8 +69,8 @@ public class PowerupManager : MonoBehaviour {
 				Physics.IgnoreCollision(tempPrefab.GetComponent<CapsuleCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<CapsuleCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				StartCoroutine(CapsulePulseRadius(player, 0.9f));
-				Destroy (tempPrefab, 2.0f);
+				StartCoroutine(CapsulePulseRadius(player, tempPrefab, 4f));
+				Destroy (tempPrefab, 4.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 		}
@@ -84,7 +84,7 @@ public class PowerupManager : MonoBehaviour {
 				Physics.IgnoreCollision(tempPrefab.GetComponent<CapsuleCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<CapsuleCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				tempPrefab.GetComponent<Rigidbody>().AddRelativeForce (Vector3.forward * 50, ForceMode.Impulse);
+				// tempPrefab.GetComponent<Rigidbody>().AddRelativeForce (Vector3.forward * 50, ForceMode.Impulse);
 				Destroy (tempPrefab, 4.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
@@ -127,30 +127,30 @@ public class PowerupManager : MonoBehaviour {
 			if (weaponLevel == 1) {
 				// Activate protective shield
 				Debug.Log("Level 1 (regular) shield activated");
-				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (2f));
+				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (5f));
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 			if (weaponLevel == 2) {
 				// Activate protective shield with added knockback effect
 				Debug.Log("Level 2 (knockback) shield activated");
-				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (3f));
+				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (5f));
 				tempPrefab = (GameObject)Instantiate (weaponPrefabs [5], player.transform.position, player.transform.rotation);
 				Physics.IgnoreCollision(tempPrefab.GetComponent<SphereCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<SphereCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				StartCoroutine(SpherePulseRadius(player, 0.75f));
+				StartCoroutine(SpherePulseRadius(player, tempPrefab, 0.75f));
 				Destroy (tempPrefab, 3.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
 			if (weaponLevel == 3) {
 				// Activate explosive protective shield
 				Debug.Log("Level 3 (explosive) shield activated");
-				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (3f));
+				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (5f));
 				tempPrefab = (GameObject)Instantiate (weaponPrefabs [6], player.transform.position, player.transform.rotation);
 				Physics.IgnoreCollision(tempPrefab.GetComponent<SphereCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<SphereCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				StartCoroutine(SpherePulseRadius(player, 0.5f));
+				StartCoroutine(SpherePulseRadius(player, tempPrefab, 0.5f));
 				Destroy (tempPrefab, 3.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}
@@ -220,12 +220,13 @@ public class PowerupManager : MonoBehaviour {
 		}
 	}
 
-	IEnumerator SpherePulseRadius(GameObject player, float size) {
+	IEnumerator SpherePulseRadius(GameObject player, GameObject prefab, float size) {
 		bool complete = false;
 
 		while (!complete) {
 			if (player.GetComponentInChildren<SphereCollider> ().radius < size) {
-				player.GetComponentInChildren<SphereCollider> ().radius += 0.025f;
+				player.GetComponentInChildren<SphereCollider> ().radius += 0.075f;
+				prefab.transform.Find ("Pulse Sphere").localScale += new Vector3 (0.15f, 0.15f, 0.15f);
 				yield return new WaitForSeconds (0.01f);
 			} 
 			else {
@@ -234,12 +235,13 @@ public class PowerupManager : MonoBehaviour {
 		}
 	}
 
-	IEnumerator CapsulePulseRadius(GameObject player, float size) {
+	IEnumerator CapsulePulseRadius(GameObject player, GameObject prefab, float size) {
 		bool complete = false;
 
 		while (!complete) {
 			if (player.GetComponentInChildren<CapsuleCollider> ().radius < size) {
-				player.GetComponentInChildren<CapsuleCollider> ().radius += 0.025f;
+				player.GetComponentInChildren<CapsuleCollider> ().radius += 0.075f;
+				prefab.transform.Find ("Pulse Sphere").localScale += new Vector3 (0.15f, 0.1875f, 0.15f);
 				yield return new WaitForSeconds (0.01f);
 			} 
 			else {

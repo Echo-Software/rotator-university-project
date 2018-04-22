@@ -8,7 +8,6 @@ public class MissileGravity : MonoBehaviour {
 	public GameObject target;
 
 	// Private variables
-	private Rigidbody missile;
 	private Ray ray;
 	private RaycastHit hit;
 	private VehicleControl vc;
@@ -17,7 +16,6 @@ public class MissileGravity : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// Get the rigidbody, box collider & vehicle control components for the attached ship object
-		missile = GetComponent<Rigidbody>();
 		vc = GetComponentInParent<VehicleControl> ();
 		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
 	}
@@ -30,7 +28,7 @@ public class MissileGravity : MonoBehaviour {
 		} 
 
 		if (gameObject.name == "Missile LV1 Prefab(Clone)") {
-			missile.AddRelativeForce (Vector3.forward * 100 - missile.velocity, ForceMode.VelocityChange);
+			transform.Translate (Vector3.forward * Time.deltaTime* 75, Space.Self);
 		} else {		
 
 			if (vc.currentPosition == 1) {
@@ -47,7 +45,7 @@ public class MissileGravity : MonoBehaviour {
 				}
 			}
 			transform.LookAt (target.transform.position);
-			missile.AddRelativeForce (0, 0, 100);
+			transform.Translate (Vector3.forward * Time.deltaTime * 75, Space.Self);
 		}
 
 	}
@@ -59,8 +57,9 @@ public class MissileGravity : MonoBehaviour {
 			// Keep the rotation of the missile matching the rotation of the track normal face
 			Quaternion targetRotation = Quaternion.FromToRotation (transform.up, hit.normal) * transform.rotation;
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, targetRotation, Time.deltaTime * 200);
+			transform.position = hit.point + hit.normal * 2.5f;
 
-			// Keep the missile clinging to the track based on the hit distance of the raycast
+			/* Keep the missile clinging to the track based on the hit distance of the raycast
 			if (hit.distance > 2.5 && hit.distance < 2.7) {
 				missile.AddForce (-transform.up * (Physics.gravity.magnitude / 10), ForceMode.Acceleration);
 			} else if (hit.distance > 2.7 && hit.distance < 3.5) {
@@ -73,7 +72,7 @@ public class MissileGravity : MonoBehaviour {
 				missile.AddForce (-transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
 			} else if (hit.distance < 1.7) {
 				missile.AddForce (transform.up * (Physics.gravity.magnitude * 20), ForceMode.Acceleration);
-			}
+			}*/
 		} 
 	}
 

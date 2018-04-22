@@ -20,7 +20,7 @@ public class VehicleControl : MonoBehaviour {
 	public float gravityShiftCooldown;
 	public bool invincible, offTrack, respawning = false;
 	public int shipGravityCharges, controllingPlayer, currentPosition, nextCheckpoint, lapCount, missileCount;
-	public GameObject cameraHook, cameraFocus;
+	public GameObject cameraHook, cameraFocus, shield;
 	public BoxCollider shipCollider;
 
 	// Private variables
@@ -432,6 +432,7 @@ public class VehicleControl : MonoBehaviour {
 
 			// Reset the camera position back to the hook position instantly so the camera doesn't have to travel back to position
 			camera.ResetCameraPosition ();
+			DeactivateShield ();
 		}
 		respawning = false;
 
@@ -462,8 +463,15 @@ public class VehicleControl : MonoBehaviour {
 
 	public IEnumerator ActivateShield(float length){
 		invincible = true;
+		shield.SetActive (true);
+		shield.transform.rotation = Quaternion.identity;
 		yield return new WaitForSeconds (length);
 		invincible = false;		
+		shield.SetActive (false);
+	}
+
+	private void DeactivateShield(){		
+		shield.SetActive (false);
 	}
 
 	public void ResetShip(){
