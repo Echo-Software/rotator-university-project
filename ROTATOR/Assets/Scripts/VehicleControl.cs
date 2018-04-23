@@ -90,29 +90,24 @@ public class VehicleControl : MonoBehaviour {
 		if (gm.raceStarted) {
 			// This code is held in update instead of fixed update so that there is 0 delay on the action taking place.
 			// Button to shift to other side of track. 
-			if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady && !respawning)
-			{
-				if (shipGravityCharges >= 1)
-				{
+			if (Input.GetButtonDown(playerInput + "Y_Button") && grounded && gravityShiftReady && !respawning) {
+				if (shipGravityCharges >= 1) {
 					camera.CameraWhiteFlash ();
 					StartCoroutine("GravityShift");                
 				}
-				else
-				{
+				else {
 					shipCollider.isTrigger = true;
 					shipCollider.isTrigger = false;
 				}
 			}
 
 			// Button to respawn (self-destruct) ship
-			if (Input.GetButtonDown(playerInput + "Back_Button") && !invincible)
-			{
+			if (Input.GetButtonDown(playerInput + "Back_Button") && !invincible) {
 				RespawnShip ();
 			}
 
 			// Button to fire current weapon
-			if (Input.GetButtonDown(playerInput + "A_Button") && grounded && !respawning)
-			{
+			if (Input.GetButtonDown(playerInput + "A_Button") && grounded && !respawning) {
 				if (currentWeapon != "NO WEAPON") {
 					pm.FireWeapon (gameObject, currentWeapon, weaponLevel);
 				}
@@ -265,7 +260,7 @@ public class VehicleControl : MonoBehaviour {
 		}
 
 		// Collision triggers for track speed boosters
-		if (obj.gameObject.tag == "Speedup") {
+		if (obj.gameObject.tag == "Speedup" && !forcedAcceleration) {
 			StartCoroutine (SpeedUp(3f));
 		}
 
@@ -318,6 +313,22 @@ public class VehicleControl : MonoBehaviour {
 		shipCollider.isTrigger = true;
 		transform.Translate(new Vector3(0, -6, 0), Space.Self);
 		transform.Rotate(0, 0, 180);
+
+		// Special passives on gravity flip depending on the ship
+		if (this.gameObject.name == "Echo") {
+			pm.FireWeapon (gameObject, "PULSE", 1);
+		}
+		else if (this.gameObject.name == "Titan") {
+			pm.FireWeapon (gameObject, "SHIELD", 1);
+		}
+		else if (this.gameObject.name == "Sonic" && !forcedAcceleration) {
+			StartCoroutine (SpeedUp(1.5f));
+		}
+		else if (this.gameObject.name == "Tundra") {
+			currentWeapon = pm.RandomWeapon (currentPosition);
+			weaponLevel = 1;
+		}
+
 		shipCollider.isTrigger = false;
 		shipGravityCharges -= 1;
 		yield return new WaitForSeconds (gravityShiftCooldown);
@@ -470,7 +481,8 @@ public class VehicleControl : MonoBehaviour {
 		shield.SetActive (false);
 	}
 
-	private void DeactivateShield(){		
+	private void DeactivateShield(){
+		invincible = false;
 		shield.SetActive (false);
 	}
 
