@@ -84,7 +84,6 @@ public class PowerupManager : MonoBehaviour {
 				Physics.IgnoreCollision(tempPrefab.GetComponent<CapsuleCollider>(), player.GetComponent<VehicleControl>().shipCollider);
 				tempPrefab.GetComponent<CapsuleCollider> ().enabled = true;
 				tempPrefab.transform.parent = player.transform;
-				// tempPrefab.GetComponent<Rigidbody>().AddRelativeForce (Vector3.forward * 50, ForceMode.Impulse);
 				Destroy (tempPrefab, 4.0f);
 				player.GetComponent<VehicleControl> ().ResetWeapon ();
 			}

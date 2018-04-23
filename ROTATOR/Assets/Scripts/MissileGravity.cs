@@ -18,6 +18,8 @@ public class MissileGravity : MonoBehaviour {
 		// Get the rigidbody, box collider & vehicle control components for the attached ship object
 		vc = GetComponentInParent<VehicleControl> ();
 		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
+
+		this.transform.parent = null;
 	}
 
 	void FixedUpdate() {
