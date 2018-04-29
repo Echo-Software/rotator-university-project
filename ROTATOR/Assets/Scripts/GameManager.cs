@@ -8,11 +8,12 @@ public class GameManager : MonoBehaviour {
 	public GameObject[] playerShipSelection;
 	public GameObject[] checkpoints;
 	public Transform[] startingGrid = new Transform[4];
-	public int numberOfPlayers = 4;
+	public int numberOfPlayers;
 	public bool raceStarted = false;
 
 	// Private variables
 	private InterfaceManager im;
+	private MenuManager menu;
 	private float[] lapTimers = new float[4];
 	private float[] totalTimers = new float[4];
 	[SerializeField]
@@ -22,11 +23,13 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		im = GameObject.Find ("InterfaceManager").GetComponent<InterfaceManager> ();
+		menu = GameObject.Find ("MenuManager").GetComponent<MenuManager> ();
+		numberOfPlayers = menu.GetPlayerNumber ();
 		player1Laps = new float[3];
 		player2Laps = new float[3];
 		player3Laps = new float[3];
 		player4Laps = new float[3];
-		playerShipSelection = new GameObject[numberOfPlayers];
+		// playerShipSelection = menu.GetShipSelection();
 		GameObject[] temp = GameObject.FindGameObjectsWithTag ("Player");
 
 		// Arrange all ships by player control

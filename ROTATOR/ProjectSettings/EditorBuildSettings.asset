@@ -7,7 +7,16 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
-    guid: 00000000000000000000000000000000
+    guid: 57e461806c6dc0e4697e0f64c4eeb417
+  - enabled: 1
+    path: Assets/Scenes/NewRace.unity
+    guid: facfa7fbcc55fdd44957edd9c9420269
+  - enabled: 1
+    path: Assets/Scenes/Instructions.unity
+    guid: 9027fee4eb0f9d543a20a826b2c50865
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
+    guid: bf41ba804d86aab4caaaaebcd79788a1
   - enabled: 1
     path: Assets/Scenes/Track.unity
-    guid: 00000000000000000000000000000000
+    guid: fc3d2b9c38440244bb1de291faf0137e
