@@ -38,15 +38,17 @@ public class InterfaceManager : MonoBehaviour {
 	private int playerNumCheck;
 	private float p1lap, p2lap, p3lap, p4lap, p1total, p2total, p3total, p4total;
 	private bool paused = false;
+	private MenuManager menu;
 
 	// Use this for initialization
 	void Start () {
+		menu = GameObject.Find ("MenuManager").GetComponent<MenuManager> ();
 		gm = GameObject.Find ("GameManager").GetComponent<GameManager> ();
-		playerNumCheck = gm.numberOfPlayers;
+		playerNumCheck = menu.GetPlayerNumber();
 		CameraPositioning ();
 	}
 
-	void Update(){
+	void Update(){		
 		InterfaceUpdate ();
 		PauseCheck ();
 	}
@@ -252,8 +254,8 @@ public class InterfaceManager : MonoBehaviour {
 
 		yield return new WaitForSeconds (1f);
 		otherUI [0].GetComponent<TextMeshProUGUI> ().text = "GO";
-		gm.raceStarted = true;
 		InterfaceInitialization ();
+		gm.raceStarted = true;
 		yield return new WaitForSeconds (0.25f);
 		otherUI [0].SetActive (false);
 		yield return new WaitForSeconds (0.25f);
@@ -290,6 +292,9 @@ public class InterfaceManager : MonoBehaviour {
 	}
 
 	public void ExitRace(){
+		menu.PlayMenuLoop ();
+		Time.timeScale = 1;
+		menu.buttonCheck = true;
 		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
 	}
 

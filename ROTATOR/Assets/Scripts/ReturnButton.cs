@@ -17,14 +17,8 @@ public class ReturnButton : MonoBehaviour {
 	}
 
 	public void Return() {
-		menu.buttonCheck = true;
+		menu.ResetButtons();
 		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
 	}
 
-	public void ReturnFromRace() {
-		menu.PlayMenuLoop ();
-		menu.buttonCheck = true;
-		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
-	}
-	
 }

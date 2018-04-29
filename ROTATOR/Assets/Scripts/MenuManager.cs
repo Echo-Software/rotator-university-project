@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour {
 	// Private variables
 	private AudioSource audioSource;
 	private int numberOfPlayers = 4;
+	[SerializeField]
 	private GameObject[] selectedShips;
 	private static MenuManager instanceReference;
 	private Button[] buttons = new Button[4];
@@ -41,12 +42,20 @@ public class MenuManager : MonoBehaviour {
 	void Update(){
 		if (buttonCheck) {
 			ResetButtons ();
-			buttonCheck = false;
 		}
+	}
+
+	public void SetPlayerNumber(int players){
+		numberOfPlayers = players;
+		selectedShips = new GameObject[players];
 	}
 
 	public int GetPlayerNumber(){
 		return numberOfPlayers;
+	}
+
+	public void SetShipSelection(int shipSelection, int controllingPlayer){
+		selectedShips [controllingPlayer - 1] = selectableShips [shipSelection];
 	}
 
 	public GameObject[] GetShipSelection(){
@@ -60,17 +69,16 @@ public class MenuManager : MonoBehaviour {
 		audioSource.loop = true;		
 	}
 
-	public void ResetButtons(){
-		// Get all references to buttons and assign their on click commands here
-		buttons[0] = GameObject.Find("New Race Button").GetComponent<Button>();
-		buttons[1] = GameObject.Find("Instructions Button").GetComponent<Button>();
-		buttons[2] = GameObject.Find("Options Button").GetComponent<Button>();
-		buttons[3] = GameObject.Find("Quit Game Button").GetComponent<Button>();
+	public void PlayRaceLoop(){		
+		audioSource.Stop ();
+		audioSource.clip = music [1];
+		audioSource.Play ();
+		audioSource.loop = true;
+	}
 
-		buttons [0].onClick.AddListener (NewRace);
-		buttons [1].onClick.AddListener (Instructions);
-		buttons [2].onClick.AddListener (Settings);
-		buttons [3].onClick.AddListener (ExitGame);
+	public void ResetButtons(){
+		StartCoroutine (TimedButtonCheck(0.15f));
+		buttonCheck = false;
 	}
 
 	public void SetBrightness(float alpha){
@@ -90,15 +98,8 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	// All menu selection options
-	public void NewRace() {		
-		// Load "NewRace" when ready
-		SceneManager.LoadScene("Track", LoadSceneMode.Single);
-
-		// Use this code when loading into the race after ship selection
-		audioSource.Stop ();
-		audioSource.clip = music [1];
-		audioSource.Play ();
-		audioSource.loop = true;
+	public void NewRace() {				
+		SceneManager.LoadScene("NewRace", LoadSceneMode.Single);
 	}
 
 	public void Instructions() {
@@ -106,13 +107,26 @@ public class MenuManager : MonoBehaviour {
 	}
 
 	public void Settings() {
-		// Point this to settings once added
 		SceneManager.LoadScene("Settings", LoadSceneMode.Single);
 	}
 
 	public void ExitGame(){
-		// Replace this with loading the main menu scene (once created)
 		Application.Quit ();
+	}
+
+	public IEnumerator TimedButtonCheck(float time){
+		yield return new WaitForSeconds (time);
+
+		// Get all references to buttons and assign their on click commands here
+		buttons [0] = GameObject.Find ("New Race Button").GetComponent<Button> ();
+		buttons [1] = GameObject.Find ("Instructions Button").GetComponent<Button> ();
+		buttons [2] = GameObject.Find ("Options Button").GetComponent<Button> ();
+		buttons [3] = GameObject.Find ("Quit Game Button").GetComponent<Button> ();
+
+		buttons [0].onClick.AddListener (NewRace);
+		buttons [1].onClick.AddListener (Instructions);
+		buttons [2].onClick.AddListener (Settings);
+		buttons [3].onClick.AddListener (ExitGame);	
 	}
 
 }
