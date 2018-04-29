@@ -25,12 +25,13 @@ public class GameManager : MonoBehaviour {
 		im = GameObject.Find ("InterfaceManager").GetComponent<InterfaceManager> ();
 		menu = GameObject.Find ("MenuManager").GetComponent<MenuManager> ();
 		numberOfPlayers = menu.GetPlayerNumber ();
+		playerShipSelection = menu.GetShipSelection ();
 		player1Laps = new float[3];
 		player2Laps = new float[3];
 		player3Laps = new float[3];
 		player4Laps = new float[3];
-		// playerShipSelection = menu.GetShipSelection();
-		GameObject[] temp = GameObject.FindGameObjectsWithTag ("Player");
+
+		GameObject[] temp = playerShipSelection;
 
 		// Arrange all ships by player control
 		for (int count = 0; count < numberOfPlayers; count++){
@@ -43,7 +44,10 @@ public class GameManager : MonoBehaviour {
 
 		// Sort ship starting grid positions based on the player number
 		for (int count = 0; count < numberOfPlayers; count++) {
-			playerShipSelection [count].transform.position = startingGrid [count].position;
+			GameObject tempShip = Instantiate(playerShipSelection [count], startingGrid [count].position, startingGrid [count].rotation);
+			tempShip.GetComponent<VehicleControl> ().controllingPlayer = count + 1;
+			playerShipSelection [count] = tempShip;
+
 		}
 
 		// Start the countdown for the start of the race
@@ -52,8 +56,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-		RunTimers ();
-		ShipPosition ();
+		if (raceStarted) {
+			RunTimers ();
+			ShipPosition ();
+		}
 	}
 
 	// Keeps lap and total timers running based on number of players
