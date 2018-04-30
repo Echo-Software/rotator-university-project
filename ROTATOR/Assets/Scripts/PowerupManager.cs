@@ -188,12 +188,18 @@ public class PowerupManager : MonoBehaviour {
 
 		// Eraser weapon code
 		if (weaponName == "ERASER") {
-			// Fire the Eraser orbital strike cannon at the first place player
+			// Fire the Eraser orbital strike cannon at the first place player (who hasn't finished)
 			Debug.Log("Eraser orbital strike cannon activated!");
 
 			// Find the target for the eraser using a loop
 			for (int count = 0; count < gm.numberOfPlayers; count++) {
-				if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 1) {
+				if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 1 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
+					target = gm.playerShipSelection [count];
+				} 
+				else if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 2 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
+					target = gm.playerShipSelection [count];
+				}
+				else if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 3 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
 					target = gm.playerShipSelection [count];
 				}
 			}

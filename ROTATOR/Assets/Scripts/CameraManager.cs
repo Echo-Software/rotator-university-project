@@ -28,11 +28,16 @@ public class CameraManager : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		// Keeps the camera oriented to gameobjects attached to the ship and smooths the movement
-		transform.forward = Vector3.Lerp (transform.forward, cameraHook.forward, smoothSpeed * Time.deltaTime);
-		transform.position = Vector3.Lerp (transform.position, cameraHook.position, smoothSpeed * Time.deltaTime);
-		// transform.up = Vector3.Lerp (transform.up, cameraHook.up, smoothSpeed * Time.deltaTime);
-		transform.LookAt (cameraFocus, cameraHook.up);
+		if (cameraHook.parent.tag == "Player") {
+			// Keeps the camera oriented to gameobjects attached to the ship and smooths the movement
+			transform.forward = Vector3.Lerp (transform.forward, cameraHook.forward, smoothSpeed * Time.deltaTime);
+			transform.position = Vector3.Lerp (transform.position, cameraHook.position, smoothSpeed * Time.deltaTime);
+			// transform.up = Vector3.Lerp (transform.up, cameraHook.up, smoothSpeed * Time.deltaTime);
+			transform.LookAt (cameraFocus, cameraHook.up);
+		} 
+		else {
+			transform.LookAt (cameraFocus, cameraHook.up);
+		}
 	} 
 
 	public void AssignCameraHooks(GameObject hook, GameObject focus){		

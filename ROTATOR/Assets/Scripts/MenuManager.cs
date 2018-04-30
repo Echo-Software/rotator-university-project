@@ -13,12 +13,14 @@ public class MenuManager : MonoBehaviour {
 	private GameObject[] selectedShips;
 	private static MenuManager instanceReference;
 	private Button[] buttons = new Button[4];
+	private int[] finalPositions;
 
 	// Public variables
 	public bool buttonCheck = false;
 	public AudioClip[] music;
 	public GameObject[] selectableShips = new GameObject[4];
 	public Image brightnessOverlay;
+	public float[] player1Laps, player2Laps, player3Laps, player4Laps;
 
 	void Awake(){
 		if (instanceReference == null) {
@@ -60,6 +62,46 @@ public class MenuManager : MonoBehaviour {
 
 	public GameObject[] GetShipSelection(){
 		return selectedShips;
+	}
+
+	public void SetLapTimes(float[] lapTimes, int player){
+		if (player == 1){
+			player1Laps = lapTimes;
+		}
+		if (player == 2){
+			player2Laps = lapTimes;
+		}
+		if (player == 3){
+			player3Laps = lapTimes;
+		}	
+		if (player == 4){
+			player4Laps = lapTimes;
+		}	
+	}
+
+	public float[] GetLapTimes(int player){
+		if (player == 1){
+			return player1Laps;
+		}
+		if (player == 2){
+			return player2Laps;
+		}
+		if (player == 3){
+			return player3Laps;
+		}	
+		if (player == 4){
+			return player4Laps;
+		}
+
+		return null;
+	}
+
+	public void SetFinalPositions(int[] finalPos){
+		finalPositions = finalPos;
+	}
+
+	public int[] GetFinalPositions(){
+		return finalPositions;
 	}
 
 	public void PlayMenuLoop(){

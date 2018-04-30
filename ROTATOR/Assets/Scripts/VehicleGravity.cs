@@ -22,18 +22,23 @@ public class VehicleGravity : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		// All actions are based on a physics raycast
-		ray = new Ray (transform.position, -transform.up);
-		if (Physics.Raycast (ray, out hit)) {
-			GravityCheck (hit);
-			if (vc.offTrack) {
-				vc.offTrack = false;
+		if (!vc.finished) {
+			// All actions are based on a physics raycast
+			ray = new Ray (transform.position, -transform.up);
+			if (Physics.Raycast (ray, out hit)) {
+				GravityCheck (hit);
+				if (vc.offTrack) {
+					vc.offTrack = false;
+				}
+			} else {
+				// Here we can call for code to destroy/respawn ship as the raycast has missed an object (ship is OOB at this point)
+				vc.grounded = false;
+				// print ("Raycast missed");
 			}
 		} 
 		else {
-			// Here we can call for code to destroy/respawn ship as the raycast has missed an object (ship is OOB at this point)
-			vc.grounded = false;
-			// print ("Raycast missed");
+			vc.offTrack = false;
+			vc.grounded = true;
 		}
 	}
 

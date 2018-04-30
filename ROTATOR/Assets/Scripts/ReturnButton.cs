@@ -21,4 +21,9 @@ public class ReturnButton : MonoBehaviour {
 		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
 	}
 
+	public void ResetGame(){
+		Destroy(GameObject.Find("MenuManager"));
+		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+	}
+
 }

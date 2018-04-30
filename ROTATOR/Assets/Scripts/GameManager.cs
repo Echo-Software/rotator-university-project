@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
 	// Public variables
 	public GameObject[] playerShipSelection;
 	public GameObject[] checkpoints;
+	public GameObject[] podium;
 	public Transform[] startingGrid = new Transform[4];
 	public int numberOfPlayers;
 	public bool raceStarted = false;
@@ -16,6 +18,7 @@ public class GameManager : MonoBehaviour {
 	private MenuManager menu;
 	private float[] lapTimers = new float[4];
 	private float[] totalTimers = new float[4];
+	private int[] finalPositions;
 	[SerializeField]
 	private float[] player1Laps, player2Laps, player3Laps, player4Laps;
 
@@ -25,6 +28,7 @@ public class GameManager : MonoBehaviour {
 		im = GameObject.Find ("InterfaceManager").GetComponent<InterfaceManager> ();
 		menu = GameObject.Find ("MenuManager").GetComponent<MenuManager> ();
 		numberOfPlayers = menu.GetPlayerNumber ();
+		finalPositions = new int[numberOfPlayers];
 		playerShipSelection = menu.GetShipSelection ();
 		player1Laps = new float[3];
 		player2Laps = new float[3];
@@ -114,8 +118,18 @@ public class GameManager : MonoBehaviour {
 						// If the player is on the same checkpoint as the player being checked against, move onto the next set of tests
 						else if(playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint == playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint) {
 							// Check the distance to the next checkpoint against the player being checked against to determine position
-							if (Vector3.Distance (playerShipSelection [count].transform.position, checkpoints [playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint-1].transform.position) <
-								Vector3.Distance (playerShipSelection [count2].transform.position, checkpoints [playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint-1].transform.position)) {							
+							string tempCheckpointName1 = "Checkpoint " + playerShipSelection [count].GetComponent<VehicleControl> ().nextCheckpoint.ToString();
+							string tempCheckpointName2 = "Checkpoint " + playerShipSelection [count2].GetComponent<VehicleControl> ().nextCheckpoint.ToString();
+
+							if (tempCheckpointName1 == "Checkpoint 38") {
+								tempCheckpointName1 = "Finish Line";								
+							}
+							if (tempCheckpointName2 == "Checkpoint 38") {
+								tempCheckpointName2 = "Finish Line";								
+							}
+
+							if (Vector3.Distance (playerShipSelection [count].transform.position, GameObject.Find(tempCheckpointName1).transform.position) <
+								Vector3.Distance (playerShipSelection [count2].transform.position, GameObject.Find(tempCheckpointName2).transform.position)) {							
 								tempPosition--;
 							}
 						}
@@ -145,25 +159,56 @@ public class GameManager : MonoBehaviour {
 
 	// Stores the current lap for the specified player in an array and then resets the lap timer for 0 for the next lap
 	public void NewLap(int player, int lapCount){
-		if (lapCount < 4) {
-			if (player == 1) {
-				player1Laps [lapCount - 1] = lapTimers [player - 1];
-			}
-			if (player == 2) {
-				player2Laps [lapCount - 1] = lapTimers [player - 1];
-			}
-			if (player == 3) {
-				player3Laps [lapCount - 1] = lapTimers [player - 1];
-			}
-			if (player == 4) {
-				player4Laps [lapCount - 1] = lapTimers [player - 1];
-			}
-			lapTimers [player - 1] = 0;
+		if (player == 1) {
+			player1Laps [lapCount - 1] = lapTimers [player - 1];
 		}
+		if (player == 2) {
+			player2Laps [lapCount - 1] = lapTimers [player - 1];
+		}
+		if (player == 3) {
+			player3Laps [lapCount - 1] = lapTimers [player - 1];
+		}
+		if (player == 4) {
+			player4Laps [lapCount - 1] = lapTimers [player - 1];
+		}
+		lapTimers [player - 1] = 0;
 	}
 
 	private void StartRace(){
 		StartCoroutine (im.Countdown ());
+	}
+
+	public void RaceCheck(){
+		bool allFinished = true;
+
+		for (int count = 0; count < numberOfPlayers; count++) {
+			if (!playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
+				allFinished = false;
+			}			
+		}
+
+		if (allFinished) {
+			StartCoroutine ("FinishRace");
+		}
+	}
+
+	IEnumerator FinishRace(){
+		// Move player ending positions and lap times over to menu manager to show on a final results screen with button to quit back to menu
+		menu.SetLapTimes(player1Laps, 1);
+		menu.SetLapTimes(player2Laps, 2);
+		menu.SetLapTimes(player3Laps, 3);
+		menu.SetLapTimes(player4Laps, 4);
+
+		// Store all players final positions in an array to pass over to the results screen
+		for (int count = 0; count < numberOfPlayers; count++) {
+			finalPositions [count] = playerShipSelection [count].GetComponent<VehicleControl> ().finalPosition;
+		}
+
+		menu.SetFinalPositions (finalPositions);
+
+		yield return new WaitForSeconds(10);
+		menu.PlayMenuLoop ();
+		SceneManager.LoadScene("Results", LoadSceneMode.Single);
 	}
 
 }

@@ -279,6 +279,41 @@ public class InterfaceManager : MonoBehaviour {
 		}
 	}
 
+
+
+	public void DeactivateUI(int playerNumber, int playerPosition){
+		if (playerNumCheck == 2 && playerNumber == 1) {
+			p1Interface [0].SetActive (false);
+			otherUI [3].SetActive (true);
+			otherUI [3].GetComponent<TextMeshProUGUI> ().text = "#" + playerPosition.ToString ();
+		} 
+		if (playerNumCheck == 2 && playerNumber == 2) {
+			p2Interface [0].SetActive (false);
+			otherUI [4].SetActive (true);
+			otherUI [4].GetComponent<TextMeshProUGUI> ().text = "#" + playerPosition.ToString ();
+		}
+		if (playerNumCheck > 2 && playerNumber == 1) {
+			p1Interface3Plus[0].SetActive (false);
+			otherUI [3].SetActive (true);
+			otherUI [3].GetComponent<TextMeshProUGUI> ().text = "#" + playerPosition.ToString ();
+		} 
+		if (playerNumCheck > 2 && playerNumber == 2) {
+			p2Interface3Plus[0].SetActive (false);
+			otherUI [4].SetActive (true);
+			otherUI [4].GetComponent<TextMeshProUGUI> ().text = "#" + playerPosition.ToString ();
+		} 
+		if (playerNumCheck > 2 && playerNumber == 3) {
+			p3Interface[0].SetActive (false);
+			otherUI [5].SetActive (true);
+			otherUI [5].GetComponent<TextMeshProUGUI> ().text = "#" + playerPosition.ToString ();
+		} 
+		if (playerNumCheck > 2 && playerNumber == 4) {
+			p4Interface[0].SetActive (false);
+			otherUI [6].SetActive (true);
+			otherUI [6].GetComponent<TextMeshProUGUI> ().text = "#" + playerPosition.ToString ();
+		} 
+	}
+
 	public void PauseGame(){
 		Time.timeScale = 0;
 		paused = true;
