@@ -189,18 +189,22 @@ public class PowerupManager : MonoBehaviour {
 		// Eraser weapon code
 		if (weaponName == "ERASER") {
 			// Fire the Eraser orbital strike cannon at the first place player (who hasn't finished)
+			bool targetAcquired = false;
 			Debug.Log("Eraser orbital strike cannon activated!");
 
 			// Find the target for the eraser using a loop
 			for (int count = 0; count < gm.numberOfPlayers; count++) {
-				if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 1 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
+				if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 1 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished && !targetAcquired) {
 					target = gm.playerShipSelection [count];
+					targetAcquired = true;
 				} 
-				else if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 2 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
+				else if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 2 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished && !targetAcquired) {
 					target = gm.playerShipSelection [count];
+					targetAcquired = true;
 				}
-				else if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 3 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished) {
+				else if (gm.playerShipSelection [count].GetComponent<VehicleControl> ().currentPosition == 3 && !gm.playerShipSelection [count].GetComponent<VehicleControl> ().finished && !targetAcquired) {
 					target = gm.playerShipSelection [count];
+					targetAcquired = true;
 				}
 			}
 
