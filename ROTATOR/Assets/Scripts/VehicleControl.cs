@@ -317,10 +317,10 @@ public class VehicleControl : MonoBehaviour {
 
 		// Special passives on gravity flip depending on the ship
 		if (this.gameObject.name == "Echo(Clone)") {
-			pm.FireWeapon (gameObject, "PULSE", 1);
+			pm.FireWeapon (gameObject, "PULSE", 0);
 		}
 		else if (this.gameObject.name == "Titan(Clone)") {
-			pm.FireWeapon (gameObject, "SHIELD", 1);
+			pm.FireWeapon (gameObject, "SHIELD", 0);
 		}
 		else if (this.gameObject.name == "Sonic(Clone)" && !forcedAcceleration) {
 			StartCoroutine (SpeedUp(1.5f));

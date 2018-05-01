@@ -40,6 +40,16 @@ public class PowerupManager : MonoBehaviour {
 
 		// Pulse weapon code
 		if (weaponName == "PULSE") {
+			if (weaponLevel == 0) {
+				// Echo's special pulse on gravity flip
+				Debug.Log("Level 1 (regular) pulse AOE fired");
+				tempPrefab = (GameObject)Instantiate (weaponPrefabs [0], player.transform.position, player.transform.rotation);
+				Physics.IgnoreCollision(tempPrefab.GetComponent<SphereCollider>(), player.GetComponent<VehicleControl>().shipCollider);
+				tempPrefab.GetComponent<SphereCollider> ().enabled = true;
+				tempPrefab.transform.parent = player.transform;
+				StartCoroutine(SpherePulseRadius(player, tempPrefab, 2.5f));
+				Destroy (tempPrefab, 2.0f);
+			}
 			if (weaponLevel == 1) {
 				// Fire pulse AOE
 				Debug.Log("Level 1 (regular) pulse AOE fired");
@@ -123,6 +133,11 @@ public class PowerupManager : MonoBehaviour {
 
 		// Shield weapon code
 		if (weaponName == "SHIELD") {
+			if (weaponLevel == 0) {
+				// Titan's special shield powerup on gravity flip
+				Debug.Log("Level 1 (regular) shield activated");
+				StartCoroutine(player.GetComponent<VehicleControl> ().ActivateShield (3f));
+			}
 			if (weaponLevel == 1) {
 				// Activate protective shield
 				Debug.Log("Level 1 (regular) shield activated");
